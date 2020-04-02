@@ -1,6 +1,8 @@
 #include "Game.hpp"
 #include "Graphics.hpp"
 #include "Settings.hpp"
+#include "AssetsManager.hpp"
+#include <assert.h>
 
 #include <iostream>
 
@@ -20,7 +22,7 @@ void Game::Start()
     Graphics::Init();
 
     // Load all the files inside the input directory
-    //AssetsManager::Init(Settings::get<std::string>("assets_path"));
+    AssetsManager::Init(Settings::get<std::string>("assets_path"));
 
     this->MainLoop();
 
@@ -29,7 +31,7 @@ void Game::Start()
 
 void Game::Clean()
 {
-    //AssetsManager::Clean();
+    AssetsManager::Clean();
     Graphics::Clean();
 }
 
@@ -72,6 +74,10 @@ void Game::MainLoop()
         }
 
         Graphics::ClearBuffers();
+
+        const auto background = AssetsManager::Get<Texture>("background");
+        assert(background != nullptr);
+        Graphics::DrawTexture(*background);
 
         // currentLevel->Update();
 
