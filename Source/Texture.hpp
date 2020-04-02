@@ -4,7 +4,9 @@
 #include <string>
 #include <SDL.h>
 
-class Texture
+#include "ECS/Component.hpp"
+
+class Texture : public Component
 {
 
 private:

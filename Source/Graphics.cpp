@@ -74,7 +74,7 @@ void Graphics::Init()
     SDL_GL_SetSwapInterval(-1);
 }
 
-void Graphics::DrawTexture(Texture& Texture)
+void Graphics::DrawTexture(const Texture& Texture)
 {
     SDL_Rect r = Texture.GetSDLRect();
 

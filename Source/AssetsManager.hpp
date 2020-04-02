@@ -22,9 +22,9 @@ public:
 
 
     template<class T>
-    [[nodiscard]] inline static T* Get(const std::string& name)
+    [[nodiscard]] inline static T& Get(const std::string& name)
     {
-        return reinterpret_cast<T*>(AssetsManager::Assets[name]);
+        return *reinterpret_cast<T*>(AssetsManager::Assets[name]);
     }
 
 

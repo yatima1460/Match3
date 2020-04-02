@@ -5,6 +5,8 @@
 #include <assert.h>
 
 #include <iostream>
+#include "ECS/Entity.hpp"
+
 
 Game* game;
 
@@ -24,7 +26,11 @@ void Game::Start()
     // Load all the files inside the input directory
     AssetsManager::Init(Settings::get<std::string>("assets_path"));
 
-    
+    world = new World();
+    Entity backgroundEntity = world->CreateEntity();
+    //world->AttachComponent(backgroundEntity, AssetsManager::Get<Texture>("background"));
+
+
 
     this->MainLoop();
 
@@ -77,9 +83,9 @@ void Game::MainLoop()
 
         Graphics::ClearBuffers();
 
-        const auto background = AssetsManager::Get<Texture>("background");
-        assert(background != nullptr);
-        Graphics::DrawTexture(*background);
+        const auto& background = AssetsManager::Get<Texture>("background");
+       
+        Graphics::DrawTexture(background);
 
         // currentLevel->Update();
 

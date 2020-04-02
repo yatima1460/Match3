@@ -28,7 +28,7 @@ public:
      * Draws a texture to point 0,0, using the texture size as destination rectangle
      * @param Texture
      */
-    static void DrawTexture(Texture& Texture);
+    static void DrawTexture(const Texture& Texture);
 
     //static void DrawTexture(Texture& texture, SDL_Rect* dest);
 
