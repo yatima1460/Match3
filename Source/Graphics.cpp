@@ -21,6 +21,8 @@ void Graphics::Init()
         exit(EXIT_FAILURE);
     }
 
+    
+
     // SDLWindow = SDL_CreateWindow(
     //         Settings::get<std::string>("window_name").c_str(),
     //         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -36,6 +38,9 @@ void Graphics::Init()
         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
+
+    SDL_Surface *surface = SDL_LoadBMP((Settings::get<std::string>("assets_path")+"/"+ Settings::get<std::string>("icon_name")).c_str());
+    SDL_SetWindowIcon(SDLWindow, surface);
 
     SDLRenderer = SDL_CreateRenderer(SDLWindow, -1, SDL_RENDERER_ACCELERATED);
 

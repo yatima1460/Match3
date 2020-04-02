@@ -24,6 +24,8 @@ void Game::Start()
     // Load all the files inside the input directory
     AssetsManager::Init(Settings::get<std::string>("assets_path"));
 
+    
+
     this->MainLoop();
 
     this->Clean();
