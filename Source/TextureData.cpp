@@ -1,14 +1,14 @@
 
 
 
-#include "Texture.hpp"
+#include "TextureData.hpp"
 #include <string>
 #include <SDL_surface.h>
 #include <cassert>
 #include "Graphics.hpp"
 
 
-Texture::Texture(const std::string& Path)
+TextureData::TextureData(const std::string& Path)  : Path(Path)
 {
     //Load splash image
     assert(!Path.empty());
@@ -23,12 +23,12 @@ Texture::Texture(const std::string& Path)
 }
 
 
-SDL_Texture* Texture::GetSDLTexture() const
+SDL_Texture* TextureData::GetSDLTexture() const
 {
     return internal;
 }
 
-SDL_Rect Texture::GetSDLRect() const
+SDL_Rect TextureData::GetSDLRect() const
 {
     SDL_Rect size = {0, 0, 0, 0};
     assert(internal != nullptr);
@@ -36,8 +36,8 @@ SDL_Rect Texture::GetSDLRect() const
     return size;
 }
 
-Texture::~Texture()
+TextureData::~TextureData()
 {
-    assert(internal != nullptr);
-    SDL_DestroyTexture(internal);
+    //assert(internal != nullptr);
+    //SDL_DestroyTexture(internal);
 }

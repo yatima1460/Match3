@@ -5,6 +5,7 @@
 #include <sstream>
 
 std::map<std::string, std::string> Settings::config;
+bool Settings::loaded;
 
 bool Settings::save()
 {
@@ -85,8 +86,9 @@ bool Settings::load()
 
         file.close();
 
-
-        return parseFile(buffer.str());
+        
+        loaded = parseFile(buffer.str());
+        return loaded;
     } else
     {
         std::cout << "ERROR: can't load settings file" << std::endl << std::endl;

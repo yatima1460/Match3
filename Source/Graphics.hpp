@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Texture.hpp"
+#include "TextureData.hpp"
 #include <SDL_ttf.h>
 
 class Graphics
@@ -28,7 +28,7 @@ public:
      * Draws a texture to point 0,0, using the texture size as destination rectangle
      * @param Texture
      */
-    static void DrawTexture(const Texture& Texture);
+    static void DrawTexture(const TextureData& Texture);
 
     //static void DrawTexture(Texture& texture, SDL_Rect* dest);
 
@@ -37,7 +37,7 @@ public:
      * @param texture
      * @param point
      */
-    static void DrawTexture(const Texture& texture, const SDL_Point& point);
+    static void DrawTexture(const TextureData& texture, const SDL_Point& point);
 
     /**
      * Swaps the graphics buffer, sends the image to the monitor

@@ -8,6 +8,9 @@
 class Settings
 {
 
+    static bool loaded;
+
+
     /**
      * Map holding the settings, in a key=value format for the ini-like file
      */
@@ -53,6 +56,8 @@ public:
     template<typename T>
     [[nodiscard]] static T get(std::string key)
     {
+        if (!loaded)
+            throw std::logic_error("Settings is not loaded yet");
         if (key.empty())
             throw std::invalid_argument("key can't be empty");
 

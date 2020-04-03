@@ -5,8 +5,12 @@
 #include <cassert>
 
 
-std::map<std::string, void*> AssetsManager::Assets;
 
+
+std::map<std::string, TextureData*> AssetsManager::Textures;
+
+
+TextureData* AssetsManager::DEFAULT_TEXTURE;
 
 std::string pathAppend(const std::string& p1, const std::string& p2)
 {
@@ -51,14 +55,14 @@ void AssetsManager::Init(const std::string& assetsDirectory)
 
         if (hasEnding(nameStr, "bmp"))
         {
+           
+            const TextureData* td = new TextureData(pathAppend(assetsDirectory, nameStr));
 
-            auto t = new Texture(pathAppend(assetsDirectory, nameStr));
-            assert(t != nullptr);
-
+             std::cout << "Loaded texture: " << nameStr << std::endl;
             size_t lastindex = nameStr.find_last_of('.');
             std::string rawname = nameStr.substr(0, lastindex);
 
-            Assets[rawname] = t;
+            Textures[rawname] = (TextureData*)td;
 
         } else if (hasEnding(nameStr, "wav"))
         {
@@ -71,25 +75,38 @@ void AssetsManager::Init(const std::string& assetsDirectory)
 
     }
 
+    DEFAULT_TEXTURE = new TextureData(pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
+
     closedir(dirp);
 
 }
 
 void AssetsManager::Clean()
 {
-    std::map<std::string, void*>::iterator it;
+  
+    // std::map<std::string, void*>::iterator it;
 
-    for (it = Assets.begin(); it != Assets.end(); it++)
+    // for (it = Assets.begin(); it != Assets.end(); it++)
+    // {
+    //     auto t = reinterpret_cast<Texture*>(it->second);
+
+
+    //     assert(t != nullptr);
+
+    //     delete t;
+
+
+    // }
+
+    for (std::pair<std::string, TextureData*> element  : Textures)
     {
-        auto t = reinterpret_cast<Texture*>(it->second);
-
-
-        assert(t != nullptr);
-
-        delete t;
-
+        assert(element.second != nullptr);
+        SDL_DestroyTexture(element.second->GetSDLTexture());
+        std::cout << "Cleaned texture:" << element.second->Path << std::endl;
 
     }
+        
+    std::cout << "Cleaned assets manager" << std::endl;
 
-    Assets.clear();
+    Textures.clear();
 }

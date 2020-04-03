@@ -4,6 +4,7 @@
 #include <cassert>
 #include "Settings.hpp"
 #include "Graphics.hpp"
+#include <iostream>
 
 SDL_Window* Graphics::SDLWindow;
 TTF_Font* Graphics::NormalFont;
@@ -71,13 +72,17 @@ void Graphics::Init()
     ScreenSurface = SDL_GetWindowSurface(SDLWindow);
 
     // Enable VSync
-    SDL_GL_SetSwapInterval(-1);
+    if (SDL_GL_SetSwapInterval(-1) != 0)
+    {
+        std::cerr << "Can't enable VSync:" << SDL_GetError() << std::endl;
+    }
 }
 
-void Graphics::DrawTexture(const Texture& Texture)
+void Graphics::DrawTexture(const TextureData& Texture)
 {
     SDL_Rect r = Texture.GetSDLRect();
-
+    assert(r.w != 0);
+    assert(r.h != 0);
     assert(SDLRenderer != nullptr);
     SDL_RenderCopy(SDLRenderer, Texture.GetSDLTexture(), nullptr, &r);
 }
@@ -162,14 +167,17 @@ void Graphics::Clean()
     SmallFont = nullptr;
     NormalFont = nullptr;
     BigFont = nullptr;
+    std::cout << "SDL2TTF cleaned" << std::endl;
 
     //Destroy SDLWindow
     assert(SDLWindow != nullptr);
     SDL_DestroyWindow(SDLWindow);
     SDLWindow = nullptr;
+    std::cout << "SDL window cleaned" << std::endl;
 
     //Quit SDL subsystems
     SDL_Quit();
+    std::cout << "SDL cleaned" << std::endl;
 }
 
 /*
@@ -186,14 +194,16 @@ void Graphics::DrawTexture(Texture& texture, SDL_Rect* dest)
 */
 
 
-void Graphics::DrawTexture(const Texture& texture, const SDL_Point& point)
+void Graphics::DrawTexture(const TextureData& texture, const SDL_Point& point)
 {
 
     SDL_Rect rec = texture.GetSDLRect();
-
+    assert(rec.w != 0);
+    assert(rec.h != 0);
 
     rec.x = point.x;
     rec.y = point.y;
+    
 
     auto sdlt = texture.GetSDLTexture();
     assert(sdlt != nullptr);

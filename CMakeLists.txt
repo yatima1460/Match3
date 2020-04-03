@@ -8,7 +8,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output)
 
 # Create project
 project(Match3)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 include_directories(Include)
 file(GLOB_RECURSE SOURCES Source/*.cpp)
 add_executable(Match3 ${SOURCES})
@@ -25,6 +25,12 @@ if(WIN32)
     # Windows
     
 endif()
+
+set(BUILD_TESTING OFF)
+add_subdirectory(Vendor/entt)
+include_directories(Vendor/entt/src)
+target_link_libraries(Match3 ${ENTT_LIBRARY})
+
 
 
 if (UNIX AND NOT APPLE AND NOT ANDROID)
