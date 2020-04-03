@@ -43,13 +43,19 @@ void Game::Start()
     registry.assign<TexturePointerData>(background_entity,AssetsManager::GetTextureData("background"));
     registry.assign<BackgroundData>(background_entity);
 
+    std::vector<std::string> gems = {"ruby","sapphire","topaz","diamond"};
+    
 
+      srand(time(NULL));
     for (size_t x = 0; x < 10; x++)
     {
          for (size_t y = 0; y < 10; y++)
         {
              auto gem = registry.create();
-            const TexturePointerData diamondTexture = AssetsManager::GetTextureData("diamond");
+
+          
+             int randNum = rand()%(gems.size() );
+            const TexturePointerData diamondTexture = AssetsManager::GetTextureData(gems[randNum]);
 
              registry.assign<TexturePointerData>(gem,diamondTexture);
 
