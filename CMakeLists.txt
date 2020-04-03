@@ -15,12 +15,14 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(Include)
 file(GLOB_RECURSE SOURCES Source/*.cpp)
 add_executable(Match3 ${SOURCES})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
 
 
 
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+endif()
 
 
 # Load SDL2
@@ -28,11 +30,23 @@ if(WIN32)
     # Windows
 
     if (MSVC)
+        #add_compile_options("/std:c++14")
+
+        add_definitions(-DNOMINMAX)
+
+        include_directories(Vendor/windows_dirent)
+
         include_directories(Vendor/SDL2-devel-2.0.12-VC/include)
         include_directories(Vendor/SDL2_ttf-devel-2.0.15-VC/include)
         
         target_link_libraries(Match3 ${PROJECT_SOURCE_DIR}/Vendor/SDL2-devel-2.0.12-VC/lib/x64/SDL2.lib)
         target_link_libraries(Match3 ${PROJECT_SOURCE_DIR}/Vendor/SDL2_ttf-devel-2.0.15-VC/lib/x64/SDL2_ttf.lib)
+
+        file(COPY ${PROJECT_SOURCE_DIR}/Vendor/SDL2-devel-2.0.12-VC/lib/x64/SDL2.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+        file(COPY ${PROJECT_SOURCE_DIR}/Vendor/SDL2_ttf-devel-2.0.15-VC/lib/x64/libfreetype-6.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        file(COPY ${PROJECT_SOURCE_DIR}/Vendor/SDL2_ttf-devel-2.0.15-VC/lib/x64/SDL2_ttf.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        file(COPY ${PROJECT_SOURCE_DIR}/Vendor/SDL2_ttf-devel-2.0.15-VC/lib/x64/zlib1.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif()
 endif()
 

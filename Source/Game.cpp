@@ -9,7 +9,7 @@
 
 #include "ECS/Components/Background.hpp"
 
-
+#include <time.h>
 
 
 Game* game;
@@ -46,7 +46,7 @@ void Game::Start()
     std::vector<std::string> gems = {"ruby","sapphire","topaz","diamond"};
     
 
-      srand(time(NULL));
+    srand(time(NULL));
     for (size_t x = 0; x < 10; x++)
     {
          for (size_t y = 0; y < 10; y++)

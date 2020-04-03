@@ -4,10 +4,10 @@
 
 
 
-Entity World::CreateEntity()
-{
+// Entity World::CreateEntity()
+// {
     
-}
+// }
 
 void World::AttachComponent(Entity e, Component* c)
 {
