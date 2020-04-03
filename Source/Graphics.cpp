@@ -6,14 +6,9 @@
 #include "Graphics.hpp"
 #include <iostream>
 
-SDL_Window* Graphics::SDLWindow;
-TTF_Font* Graphics::NormalFont;
-TTF_Font* Graphics::BigFont;
-TTF_Font* Graphics::SmallFont;
-SDL_Renderer* Graphics::SDLRenderer;
-SDL_Surface* Graphics::ScreenSurface;
 
-void Graphics::Init()
+
+ Graphics::Graphics()
 {
     //Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -156,7 +151,7 @@ SDL_Rect Graphics::MeasureText(const std::string& String)
     return Graphics::MeasureText(String, Graphics::GetDefaultFont());
 }
 
-void Graphics::Clean()
+Graphics::~Graphics()
 {
     assert(SmallFont != nullptr);
     TTF_CloseFont(SmallFont);

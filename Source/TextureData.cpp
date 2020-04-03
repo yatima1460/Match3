@@ -6,6 +6,7 @@
 #include <SDL_surface.h>
 #include <cassert>
 #include "Graphics.hpp"
+#include "Game.hpp"
 
 
 TextureData::TextureData(const std::string& Path)  : Path(Path)
@@ -15,7 +16,7 @@ TextureData::TextureData(const std::string& Path)  : Path(Path)
     SDL_Surface* background_surface = SDL_LoadBMP(Path.c_str());
     assert(background_surface != nullptr);
 
-    internal = SDL_CreateTextureFromSurface(Graphics::GetSDLRenderer(), background_surface);
+    internal = SDL_CreateTextureFromSurface(game->graphics->GetSDLRenderer(), background_surface);
     assert(internal != nullptr);
 
     assert(background_surface != nullptr);

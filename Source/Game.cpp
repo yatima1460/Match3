@@ -1,5 +1,5 @@
 #include "Game.hpp"
-#include "Graphics.hpp"
+
 #include "Settings.hpp"
 #include "AssetsManager.hpp"
 #include <assert.h>
@@ -29,7 +29,7 @@ void Game::Start()
 
 
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
-    Graphics::Init();
+    graphics = new Graphics();
 
     // Load all the files inside the input directory
     AssetsManager::Init(Settings::get<std::string>("assets_path"));
@@ -72,8 +72,18 @@ void Game::Start()
 void Game::Clean()
 {
     AssetsManager::Clean();
-    Graphics::Clean();
-    std::cout << "Engine claned" << std::endl;
+    // delete assetManager;
+    // assetManager = nullptr;
+    std::cout << "Asset Manager cleaned" << std::endl;
+
+    delete graphics;
+    graphics = nullptr;
+    std::cout << "Graphics cleaned" << std::endl;
+
+    delete game;
+    game = nullptr;
+    std::cout << "Engine cleaned" << std::endl;
+    
 }
 
 
@@ -120,18 +130,18 @@ void Game::MainLoop()
             }
         }
 
-        Graphics::ClearBuffers();
+        graphics->ClearBuffers();
 
 
-    registry.view<BackgroundData, TextureData>().each([](const auto entity, const auto& BackgroundData, const auto& TextureData) {
-        Graphics::DrawTexture(TextureData);
+    registry.view<BackgroundData, TextureData>().each([this](const auto entity, const auto& BackgroundData, const auto& TextureData) {
+        graphics->DrawTexture(TextureData);
     });
 
 
-    registry.view<SDL_Point, TextureData>().each([](const auto entity, const auto& PositionData, const auto& TextureData) {
+    registry.view<SDL_Point, TextureData>().each([this](const auto entity, const auto& PositionData, const auto& TextureData) {
 
         
-        Graphics::DrawTexture(TextureData, PositionData);
+        graphics->DrawTexture(TextureData, PositionData);
     });
 
     timer = Timer::FPS(timer);
@@ -154,6 +164,6 @@ void Game::MainLoop()
 
         // currentLevel->Draw();
 
-        Graphics::SwapBuffers();
+        graphics->SwapBuffers();
     }
 }

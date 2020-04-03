@@ -1,12 +1,12 @@
 #include "Timer.hpp"
 
 #include <SDL.h>
-#include  <algorithm>
+#include <algorithm>
 
-float clamp(float n, float lower, float upper) {
-  return std::max(lower, std::min(n, upper));
+float clamp(float n, float lower, float upper)
+{
+    return std::max(lower, std::min(n, upper));
 }
-
 
 #define FPS_LINEAR_INTERPOLATION 0.04
 

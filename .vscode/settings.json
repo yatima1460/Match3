@@ -51,6 +51,8 @@
         "list": "cpp",
         "unordered_set": "cpp",
         "ratio": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "forward_list": "cpp",
+        "iomanip": "cpp"
     }
 }
