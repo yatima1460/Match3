@@ -101,7 +101,7 @@ void Graphics::DrawTexture(const TexturePointerData& Texture)
     assert(r.w != 0);
     assert(r.h != 0);
     assert(SDLRenderer != nullptr);
-    SDL_RenderCopy(SDLRenderer, Texture.GetSDLTexture(), nullptr, &r);
+    SDL_RenderCopy(SDLRenderer, Texture.internal, nullptr, &r);
 }
 
 void Graphics::SwapBuffers()
@@ -257,7 +257,7 @@ void Graphics::DrawTexture(const TexturePointerData& texture, const SDL_Point& p
     rec.y = point.y;
     
 
-    auto sdlt = texture.GetSDLTexture();
+    auto sdlt = texture.internal;
     assert(sdlt != nullptr);
 
     assert(SDLRenderer != nullptr);

@@ -39,7 +39,7 @@ struct TexturePointerData
 
     explicit TexturePointerData(const std::string &Path);
 
-    [[nodiscard]] SDL_Texture *GetSDLTexture() const;
+   
 
     [[nodiscard]] SDL_Rect GetSDLRect() const;
 

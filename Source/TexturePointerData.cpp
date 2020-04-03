@@ -12,10 +12,7 @@
 
 
 
-SDL_Texture* TexturePointerData::GetSDLTexture() const
-{
-    return internal;
-}
+
 
 SDL_Rect TexturePointerData::GetSDLRect() const
 {

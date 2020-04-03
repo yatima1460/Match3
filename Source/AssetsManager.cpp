@@ -153,7 +153,7 @@ void AssetsManager::Clean()
     for (std::pair<std::string, TexturePointerData> element  : Textures)
     {
 
-        SDL_DestroyTexture(element.second.GetSDLTexture());
+        SDL_DestroyTexture(element.second.internal);
         std::cout << "Cleaned texture:" << element.second.Path << std::endl;
 
     }
