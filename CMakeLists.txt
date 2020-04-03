@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the source code and call cmake from there. Thank you.")
+endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Libraries)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Libraries)
@@ -23,10 +26,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 # Load SDL2
 if(WIN32)
     # Windows
-    
+
+    if (MSVC)
+        include_directories(Vendor/SDL2-devel-2.0.12-VC/include)
+        include_directories(Vendor/SDL2_ttf-devel-2.0.15-VC/include)
+        
+        target_link_libraries(Match3 ${PROJECT_SOURCE_DIR}/Vendor/SDL2-devel-2.0.12-VC/lib/x64/SDL2.lib)
+        target_link_libraries(Match3 ${PROJECT_SOURCE_DIR}/Vendor/SDL2_ttf-devel-2.0.15-VC/lib/x64/SDL2_ttf.lib)
+    endif()
 endif()
 
-set(BUILD_TESTING OFF)
+
 add_subdirectory(Vendor/entt)
 include_directories(Vendor/entt/src)
 target_link_libraries(Match3 ${ENTT_LIBRARY})
