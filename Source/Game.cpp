@@ -5,9 +5,8 @@
 #include <assert.h>
 #include "Timer.hpp"
 #include <iostream>
-#include "ECS/Entity.hpp"
 
-#include "ECS/Components/Background.hpp"
+
 
 #include <time.h>
 

@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include "Settings.hpp"
 #include <assert.h>
-#include "ECS/Components/Component.hpp"
+
 
 struct TexturePointerData
 {
