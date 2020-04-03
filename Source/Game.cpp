@@ -40,7 +40,7 @@ void Game::Start()
     // world->AttachComponent(backgroundEntity, new Background());
 
     auto background_entity = registry.create();
-    registry.assign<TextureData>(background_entity,AssetsManager::GetTextureData("background"));
+    registry.assign<TexturePointerData>(background_entity,AssetsManager::GetTextureData("background"));
     registry.assign<BackgroundData>(background_entity);
 
 
@@ -49,9 +49,9 @@ void Game::Start()
          for (size_t y = 0; y < 10; y++)
         {
              auto gem = registry.create();
-            const TextureData diamondTexture = AssetsManager::GetTextureData("diamond");
+            const TexturePointerData diamondTexture = AssetsManager::GetTextureData("diamond");
 
-             registry.assign<TextureData>(gem,diamondTexture);
+             registry.assign<TexturePointerData>(gem,diamondTexture);
 
 
             const unsigned int textureSize = 64;
@@ -133,12 +133,12 @@ void Game::MainLoop()
         graphics->ClearBuffers();
 
 
-    registry.view<BackgroundData, TextureData>().each([this](const auto entity, const auto& BackgroundData, const auto& TextureData) {
+    registry.view<BackgroundData, TexturePointerData>().each([this](const auto entity, const auto& BackgroundData, const auto& TextureData) {
         graphics->DrawTexture(TextureData);
     });
 
 
-    registry.view<SDL_Point, TextureData>().each([this](const auto entity, const auto& PositionData, const auto& TextureData) {
+    registry.view<SDL_Point, TexturePointerData>().each([this](const auto entity, const auto& PositionData, const auto& TextureData) {
 
         
         graphics->DrawTexture(TextureData, PositionData);

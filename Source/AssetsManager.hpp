@@ -3,7 +3,7 @@
 
 #include <map>
 #include <assert.h>
-#include "TextureData.hpp"
+#include "TexturePointerData.hpp"
 
 // TODO: default texture in case of error?
 
@@ -13,9 +13,9 @@ class AssetsManager
 
 private:
 
-    static std::map<std::string, TextureData*> Textures;
+    static std::map<std::string, TexturePointerData> Textures;
 
-    static TextureData* DEFAULT_TEXTURE;
+    static TexturePointerData DEFAULT_TEXTURE;
 
 public:
 
@@ -30,7 +30,7 @@ public:
     // }
 
 
-    static TextureData& GetTextureData(const std::string& name)
+    static TexturePointerData GetTextureData(const std::string& name)
     {
       
 
@@ -38,13 +38,13 @@ public:
         if (iter != Textures.end() )
         {
               auto e = iter->second;
-              assert(e != nullptr);
-              return *e;
+              
+              return e;
         }
         else
         {
-            assert(DEFAULT_TEXTURE != nullptr);
-            return *DEFAULT_TEXTURE;
+            assert(DEFAULT_TEXTURE.internal != nullptr);
+            return DEFAULT_TEXTURE;
         }
         
 

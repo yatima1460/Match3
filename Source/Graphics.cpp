@@ -5,7 +5,8 @@
 #include "Settings.hpp"
 #include "Graphics.hpp"
 #include <iostream>
-
+#include "Game.hpp"
+#include "TexturePointerData.hpp"
 
 
  Graphics::Graphics()
@@ -73,7 +74,7 @@
     }
 }
 
-void Graphics::DrawTexture(const TextureData& Texture)
+void Graphics::DrawTexture(const TexturePointerData& Texture)
 {
     SDL_Rect r = Texture.GetSDLRect();
     assert(r.w != 0);
@@ -128,6 +129,24 @@ void Graphics::ClearBuffers()
     assert(Graphics::SDLRenderer != nullptr);
     SDL_SetRenderDrawColor(Graphics::SDLRenderer, 100, 149, 237, 255);
     SDL_RenderClear(Graphics::SDLRenderer);
+}
+
+TexturePointerData Graphics::LoadTextureFromBMP(const std::string path)
+{
+
+    TexturePointerData td;
+    td.Path = path;
+    assert(!path.empty());
+    SDL_Surface* background_surface = SDL_LoadBMP(path.c_str());
+    assert(background_surface != nullptr);
+
+    td.internal = SDL_CreateTextureFromSurface(game->graphics->GetSDLRenderer(), background_surface);
+    assert(td.internal != nullptr);
+
+    assert(background_surface != nullptr);
+    SDL_FreeSurface(background_surface);
+
+    return td;
 }
 
 SDL_Rect Graphics::MeasureText(const std::string& String, TTF_Font& Font)
@@ -189,7 +208,7 @@ void Graphics::DrawTexture(Texture& texture, SDL_Rect* dest)
 */
 
 
-void Graphics::DrawTexture(const TextureData& texture, const SDL_Point& point)
+void Graphics::DrawTexture(const TexturePointerData& texture, const SDL_Point& point)
 {
 
     SDL_Rect rec = texture.GetSDLRect();

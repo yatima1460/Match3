@@ -3,14 +3,14 @@
 #include <iostream>
 #include <dirent.h>
 #include <cassert>
+#include "Game.hpp"
 
 
 
+std::map<std::string, TexturePointerData> AssetsManager::Textures;
 
-std::map<std::string, TextureData*> AssetsManager::Textures;
 
-
-TextureData* AssetsManager::DEFAULT_TEXTURE;
+TexturePointerData AssetsManager::DEFAULT_TEXTURE;
 
 std::string pathAppend(const std::string& p1, const std::string& p2)
 {
@@ -49,22 +49,25 @@ void AssetsManager::Init(const std::string& assetsDirectory)
     while ((dp = readdir(dirp)) != nullptr)
     {
 
-
-
         std::string nameStr(dp->d_name);
+
+        const size_t lastindex = nameStr.find_last_of('.');
+        const std::string rawname = nameStr.substr(0, lastindex);
 
         if (hasEnding(nameStr, "bmp"))
         {
            
-            const TextureData* td = new TextureData(pathAppend(assetsDirectory, nameStr));
+            Textures[rawname] = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, nameStr));
+            std::cout << "Loaded BMP texture: " << nameStr << std::endl;
 
-             std::cout << "Loaded texture: " << nameStr << std::endl;
-            size_t lastindex = nameStr.find_last_of('.');
-            std::string rawname = nameStr.substr(0, lastindex);
-
-            Textures[rawname] = (TextureData*)td;
-
-        } else if (hasEnding(nameStr, "wav"))
+        } 
+        // else if (hasEnding(nameStr, "png"))
+        // {
+            
+        //     Textures[rawname] = game->graphics->LoadTextureFromPNG(pathAppend(assetsDirectory, nameStr));
+        //     std::cout << "Loaded PNG texture: " << nameStr << std::endl;
+        // }
+        else if (hasEnding(nameStr, "wav"))
         {
             // TODO
         } else if (hasEnding(nameStr, "ttf"))
@@ -75,10 +78,16 @@ void AssetsManager::Init(const std::string& assetsDirectory)
 
     }
 
-    DEFAULT_TEXTURE = new TextureData(pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
+    DEFAULT_TEXTURE = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
 
-    closedir(dirp);
-
+    if (closedir(dirp) == 0)
+    {
+        std::cout << "Assets directory closed: " << assetsDirectory << std::endl;
+    }
+    else
+    {
+        std::cerr << "Couldn't close assets directory: " << assetsDirectory << std::endl;
+    }
 }
 
 void AssetsManager::Clean()
@@ -98,11 +107,11 @@ void AssetsManager::Clean()
 
     // }
 
-    for (std::pair<std::string, TextureData*> element  : Textures)
+    for (std::pair<std::string, TexturePointerData> element  : Textures)
     {
-        assert(element.second != nullptr);
-        SDL_DestroyTexture(element.second->GetSDLTexture());
-        std::cout << "Cleaned texture:" << element.second->Path << std::endl;
+
+        SDL_DestroyTexture(element.second.GetSDLTexture());
+        std::cout << "Cleaned texture:" << element.second.Path << std::endl;
 
     }
         
