@@ -150,8 +150,8 @@ void Game::MainLoop()
         graphics->DrawTexture(TextureData, PositionData);
     });
 
-    timer = Timer::FPS(timer);
-    std::cout << timer.FPS << std::endl;
+    // timer = Timer::FPS(timer);
+    // std::cout << timer.FPS << std::endl;
         // auto entities = world->GetAllComponentsOfTypes<Texture, Background>();
         // for (auto entity : entities)
         // {

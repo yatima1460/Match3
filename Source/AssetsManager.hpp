@@ -10,18 +10,13 @@
 class AssetsManager
 {
 
-
 private:
-
     static std::map<std::string, TexturePointerData> Textures;
 
     static TexturePointerData DEFAULT_TEXTURE;
 
 public:
-
-
-    static void Init(const std::string& assetsDirectory);
-
+    static void Init(const std::string &assetsDirectory);
 
     // template<class T>
     // [[nodiscard]] inline static T& Get(const std::string& name)
@@ -29,27 +24,24 @@ public:
     //     return *reinterpret_cast<T*>(AssetsManager::T[name]);
     // }
 
-
-    static TexturePointerData GetTextureData(const std::string& name)
+    static TexturePointerData GetTextureData(const std::string &name)
     {
-      
 
         auto iter = Textures.find(name);
-        if (iter != Textures.end() )
+        if (iter != Textures.end())
         {
-              auto e = iter->second;
-              
-              return e;
+            auto e = iter->second;
+
+            return e;
         }
         else
         {
             assert(DEFAULT_TEXTURE.internal != nullptr);
             return DEFAULT_TEXTURE;
         }
-        
-
     }
 
-    static void Clean();
+    [[nodiscard]] static SDL_Surface* LoadSDLSurfaceFromPNG(const std::string path);
 
+    static void Clean();
 };

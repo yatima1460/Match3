@@ -5,7 +5,8 @@
 #include <cassert>
 #include "Game.hpp"
 
-
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 std::map<std::string, TexturePointerData> AssetsManager::Textures;
 
@@ -39,6 +40,48 @@ bool hasEnding(std::string const& fullString, std::string const& ending)
     {
         return false;
     }
+}
+
+[[nodiscard]] SDL_Surface *AssetsManager::LoadSDLSurfaceFromPNG(const std::string path)
+{
+    int req_format = STBI_rgb_alpha;
+    int width, height, orig_format;
+    unsigned char *data = stbi_load(path.c_str(), &width, &height, &orig_format, req_format);
+    if (data == NULL)
+    {
+        SDL_Log("Loading image failed: %s", stbi_failure_reason());
+        exit(1);
+    }
+
+    int depth, pitch;
+    Uint32 pixel_format;
+    if (req_format == STBI_rgb)
+    {
+        depth = 24;
+        pitch = 3 * width; // 3 bytes per pixel * pixels per row
+        pixel_format = SDL_PIXELFORMAT_RGB24;
+    }
+    else
+    { // STBI_rgb_alpha (RGBA)
+        depth = 32;
+        pitch = 4 * width;
+        pixel_format = SDL_PIXELFORMAT_RGBA32;
+    }
+    
+  
+
+    SDL_Surface *surf = SDL_CreateRGBSurfaceWithFormatFrom((void *)data, width, height,
+                                                           depth, pitch, pixel_format);
+    
+    
+
+    if (surf == NULL)
+    {
+        SDL_Log("Creating surface failed: %s", SDL_GetError());
+        abort();
+    }
+
+    return surf;
 }
 
 void AssetsManager::Init(const std::string& assetsDirectory)

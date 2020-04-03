@@ -14,6 +14,7 @@ private:
      TTF_Font* NormalFont;
      TTF_Font* BigFont;
      SDL_Surface* ScreenSurface;
+     SDL_GLContext GLContext;
 
 public:
      Graphics();
@@ -59,6 +60,8 @@ public:
      void DrawText(const std::string& Text, SDL_Point Position, SDL_Color Color, TTF_Font& Font);
 
     [[nodiscard]]  SDL_Rect MeasureText(const std::string& String, TTF_Font& Font);
+
+ 
 
     [[nodiscard]] TexturePointerData LoadTextureFromPNG(const std::string path);
 

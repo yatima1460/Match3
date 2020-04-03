@@ -8,8 +8,7 @@
 #include "Game.hpp"
 #include "TexturePointerData.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "AssetsManager.hpp"
 
 
  Graphics::Graphics()
@@ -17,8 +16,8 @@
     //Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        fprintf(stderr, "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
+        std::cerr << "SDL could not initialize! " <<  SDL_GetError() << std::endl;
+        abort();
     }
 
     
@@ -27,20 +26,24 @@
     //         Settings::get<std::string>("window_name").c_str(),
     //         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     //         -1, -1,
-    //         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
+    //         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_RENDERER_ACCELERATED);
     SDLWindow = SDL_CreateWindow(
         Settings::get<std::string>("window_name").c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         1280, 720,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+        SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_RENDERER_ACCELERATED);
     if (SDLWindow == nullptr)
     {
         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    SDL_Surface *surface = SDL_LoadBMP((Settings::get<std::string>("assets_path")+"/"+ Settings::get<std::string>("icon_name")).c_str());
-    SDL_SetWindowIcon(SDLWindow, surface);
+    SDL_Surface *surface = AssetsManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path")+"/"+ Settings::get<std::string>("icon_name")).c_str());
+    if (surface == nullptr)
+        std::cerr << "Application icon is NULL" << std::endl;
+    else
+        SDL_SetWindowIcon(SDLWindow, surface);
+    //TODO: free surface icon
 
     SDLRenderer = SDL_CreateRenderer(SDLWindow, -1, SDL_RENDERER_ACCELERATED);
 
@@ -70,10 +73,25 @@
     // Get SDLWindow surface
     ScreenSurface = SDL_GetWindowSurface(SDLWindow);
 
+    GLContext = SDL_GL_CreateContext(SDLWindow);
+
     // Enable VSync
     if (SDL_GL_SetSwapInterval(-1) != 0)
     {
-        std::cerr << "Can't enable VSync:" << SDL_GetError() << std::endl;
+        std::cerr << "Can't enable Adaptive VSync:" << SDL_GetError() << std::endl;
+        std::cerr << "Falling back to  Non-Adaptive VSync:" << SDL_GetError() << std::endl;
+        if (SDL_GL_SetSwapInterval(1) != 0)
+        {
+            std::cerr << "Can't enable Non Adaptive VSync:" << SDL_GetError() << std::endl;
+        }
+        else
+        {
+            std::cout << "Non-Adaptive VSync enabled" << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Adaptive VSync enabled" << std::endl;
     }
 }
 
@@ -136,52 +154,14 @@ void Graphics::ClearBuffers()
 
 TexturePointerData Graphics::LoadTextureFromPNG(const std::string path)
 {
+    SDL_Surface* surf = AssetsManager::LoadSDLSurfaceFromPNG(path);
+    assert(surf != nullptr);
+
     TexturePointerData td;
-    // This example shows how to create a SDL_Surface* with the data loaded
-    // from an image file with stb_image.h (https://github.com/nothings/stb/)
-
-    // the color format you request stb_image to output,
-    // use STBI_rgb if you don't want/need the alpha channel
-    int req_format = STBI_rgb_alpha;
-    int width, height, orig_format;
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &orig_format, req_format);
-    if (data == NULL) {
-        SDL_Log("Loading image failed: %s", stbi_failure_reason());
-        exit(1);
-    }
-
-    int depth, pitch;
-    Uint32 pixel_format;
-    if (req_format == STBI_rgb) {
-        depth = 24;
-        pitch = 3*width; // 3 bytes per pixel * pixels per row
-        pixel_format = SDL_PIXELFORMAT_RGB24;
-    } else { // STBI_rgb_alpha (RGBA)
-        depth = 32;
-        pitch = 4*width;
-        pixel_format = SDL_PIXELFORMAT_RGBA32;
-    }
-
-    SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormatFrom((void*)data, width, height,
-                                                        depth, pitch, pixel_format);
-
-    if (surf == NULL) {
-        SDL_Log("Creating surface failed: %s", SDL_GetError());
-        stbi_image_free(data);
-        exit(1);
-    }
-
-td.internal =  SDL_CreateTextureFromSurface(game->graphics->GetSDLRenderer(), surf);
-
+    td.internal =  SDL_CreateTextureFromSurface(game->graphics->GetSDLRenderer(), surf);
     td.Path = path;
-    // ... do something useful with the surface ...
-    // ...
 
-    // when you don't need the surface anymore, free it..
     SDL_FreeSurface(surf);
-    // .. *and* the data used by the surface!
-    stbi_image_free(data);
-
     return td;
 }
 
@@ -236,6 +216,10 @@ Graphics::~Graphics()
     NormalFont = nullptr;
     BigFont = nullptr;
     std::cout << "SDL2TTF cleaned" << std::endl;
+
+
+    SDL_GL_DeleteContext(GLContext);
+    std::cout << "SDL2 GL Context cleaned" << std::endl;
 
     //Destroy SDLWindow
     assert(SDLWindow != nullptr);
