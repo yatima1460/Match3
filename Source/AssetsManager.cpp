@@ -54,19 +54,19 @@ void AssetsManager::Init(const std::string& assetsDirectory)
         const size_t lastindex = nameStr.find_last_of('.');
         const std::string rawname = nameStr.substr(0, lastindex);
 
-        if (hasEnding(nameStr, "bmp"))
-        {
-           
-            Textures[rawname] = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, nameStr));
-            std::cout << "Loaded BMP texture: " << nameStr << std::endl;
-
-        } 
-        // else if (hasEnding(nameStr, "png"))
+        // if (hasEnding(nameStr, "bmp"))
         // {
+           
+        //     Textures[rawname] = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, nameStr));
+        //     std::cout << "Loaded BMP texture: " << nameStr << std::endl;
+
+        // } 
+         if (hasEnding(nameStr, "png"))
+        {
             
-        //     Textures[rawname] = game->graphics->LoadTextureFromPNG(pathAppend(assetsDirectory, nameStr));
-        //     std::cout << "Loaded PNG texture: " << nameStr << std::endl;
-        // }
+            Textures[rawname] = game->graphics->LoadTextureFromPNG(pathAppend(assetsDirectory, nameStr));
+            std::cout << "Loaded PNG texture: " << nameStr << std::endl;
+        }
         else if (hasEnding(nameStr, "wav"))
         {
             // TODO
@@ -78,7 +78,7 @@ void AssetsManager::Init(const std::string& assetsDirectory)
 
     }
 
-    DEFAULT_TEXTURE = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
+    DEFAULT_TEXTURE = game->graphics->LoadTextureFromPNG(pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
 
     if (closedir(dirp) == 0)
     {

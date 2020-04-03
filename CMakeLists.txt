@@ -31,7 +31,7 @@ add_subdirectory(Vendor/entt)
 include_directories(Vendor/entt/src)
 target_link_libraries(Match3 ${ENTT_LIBRARY})
 
-
+include_directories(Vendor/stb)
 
 if (UNIX AND NOT APPLE AND NOT ANDROID)
 

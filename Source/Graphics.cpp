@@ -8,6 +8,9 @@
 #include "Game.hpp"
 #include "TexturePointerData.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 
  Graphics::Graphics()
 {
@@ -129,6 +132,57 @@ void Graphics::ClearBuffers()
     assert(Graphics::SDLRenderer != nullptr);
     SDL_SetRenderDrawColor(Graphics::SDLRenderer, 100, 149, 237, 255);
     SDL_RenderClear(Graphics::SDLRenderer);
+}
+
+TexturePointerData Graphics::LoadTextureFromPNG(const std::string path)
+{
+    TexturePointerData td;
+    // This example shows how to create a SDL_Surface* with the data loaded
+    // from an image file with stb_image.h (https://github.com/nothings/stb/)
+
+    // the color format you request stb_image to output,
+    // use STBI_rgb if you don't want/need the alpha channel
+    int req_format = STBI_rgb_alpha;
+    int width, height, orig_format;
+    unsigned char* data = stbi_load(path.c_str(), &width, &height, &orig_format, req_format);
+    if (data == NULL) {
+        SDL_Log("Loading image failed: %s", stbi_failure_reason());
+        exit(1);
+    }
+
+    int depth, pitch;
+    Uint32 pixel_format;
+    if (req_format == STBI_rgb) {
+        depth = 24;
+        pitch = 3*width; // 3 bytes per pixel * pixels per row
+        pixel_format = SDL_PIXELFORMAT_RGB24;
+    } else { // STBI_rgb_alpha (RGBA)
+        depth = 32;
+        pitch = 4*width;
+        pixel_format = SDL_PIXELFORMAT_RGBA32;
+    }
+
+    SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormatFrom((void*)data, width, height,
+                                                        depth, pitch, pixel_format);
+
+    if (surf == NULL) {
+        SDL_Log("Creating surface failed: %s", SDL_GetError());
+        stbi_image_free(data);
+        exit(1);
+    }
+
+td.internal =  SDL_CreateTextureFromSurface(game->graphics->GetSDLRenderer(), surf);
+
+    td.Path = path;
+    // ... do something useful with the surface ...
+    // ...
+
+    // when you don't need the surface anymore, free it..
+    SDL_FreeSurface(surf);
+    // .. *and* the data used by the surface!
+    stbi_image_free(data);
+
+    return td;
 }
 
 TexturePointerData Graphics::LoadTextureFromBMP(const std::string path)
