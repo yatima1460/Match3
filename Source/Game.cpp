@@ -6,169 +6,165 @@
 #include "Timer.hpp"
 #include <iostream>
 
-
-
 #include <time.h>
 
-
-Game* game;
+namespace Game
+{
 
 struct BackgroundData
 {
-
 };
 
-void Game::Start()
+void MainLoop(GameData game);
+
+GameData Started()
 {
+    
+    GameData game;
+
     if (!Settings::load())
     {
         std::cout << "Can't load settings from .ini file" << std::endl;
         abort();
     }
 
-
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
-    graphics = new Graphics();
+    game.graphics = Graphics::Init();
 
     // Load all the files inside the input directory
-    AssetsManager::Init(Settings::get<std::string>("assets_path"));
+    AssetsManager::Init(game.graphics, Settings::get<std::string>("assets_path"));
+
+
+    game.registry = new entt::DefaultRegistry();
 
     // world = new World();
     // Entity backgroundEntity = world->CreateEntity();
     // world->AttachComponent(backgroundEntity, AssetsManager::GetTextureData("background"));
     // world->AttachComponent(backgroundEntity, new Background());
 
-    auto background_entity = registry.create();
-    registry.assign<TexturePointerData>(background_entity,AssetsManager::GetTextureData("background"));
-    registry.assign<BackgroundData>(background_entity);
+    auto background_entity = game.registry->create();
+    game.registry->assign<TexturePointerData>(background_entity, AssetsManager::GetTextureData("background"));
+    game.registry->assign<BackgroundData>(background_entity);
 
-    std::vector<std::string> gems = {"ruby","sapphire","topaz","diamond"};
-    
+    std::vector<std::string> gems = {"ruby", "sapphire", "topaz", "diamond"};
 
     srand(time(NULL));
     for (size_t x = 0; x < 10; x++)
     {
-         for (size_t y = 0; y < 10; y++)
+        for (size_t y = 0; y < 10; y++)
         {
-             auto gem = registry.create();
+            auto gem = game.registry->create();
 
-          
-             int randNum = rand()%(gems.size() );
+            int randNum = rand() % (gems.size());
             const TexturePointerData diamondTexture = AssetsManager::GetTextureData(gems[randNum]);
 
-             registry.assign<TexturePointerData>(gem,diamondTexture);
-
+            game.registry->assign<TexturePointerData>(gem, diamondTexture);
 
             const unsigned int textureSize = 64;
             SDL_Point p;
-            p.x = x*textureSize;
-            p.y = y*textureSize;
-            registry.assign<SDL_Point>(gem,p);
+            p.x = x * textureSize;
+            p.y = y * textureSize;
+            game.registry->assign<SDL_Point>(gem, p);
         }
     }
-   
 
     
-    this->MainLoop();
+    MainLoop(game);
+    game = Cleaned(game);
 
-    this->Clean();
+    return game;
 }
 
-void Game::Clean()
+GameData Cleaned(GameData game)
 {
     AssetsManager::Clean();
     // delete assetManager;
     // assetManager = nullptr;
     std::cout << "Asset Manager cleaned" << std::endl;
 
-    delete graphics;
-    graphics = nullptr;
+    game.graphics = Graphics::Cleaned(game.graphics);
     std::cout << "Graphics cleaned" << std::endl;
 
-    delete game;
-    game = nullptr;
-    std::cout << "Engine cleaned" << std::endl;
     
+    std::cout << "Engine cleaned" << std::endl;
+
+    return game;
 }
 
-
-
-void Game::MainLoop()
+void MainLoop(GameData game)
 {
     // Main loop
 
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
-    while (!Game::quit)
+    while (!game.quit)
     {
         timer = Timer::Ticked(timer);
-        while (SDL_PollEvent(&e) != 0)
+        while (SDL_PollEvent(&game.e) != 0)
         {
-            switch (e.type)
+            switch (game.e.type)
             {
-                case SDL_QUIT:
+            case SDL_QUIT:
+            {
+                // Pressing the SDLWindow [X] closes
+                game.quit = true;
+                break;
+            }
+            case SDL_KEYDOWN:
+            {
+                switch (game.e.key.keysym.sym)
                 {
-                    // Pressing the SDLWindow [X] closes
-                    quit = true;
+                // ESC closes
+                case SDLK_ESCAPE:
+                    game.quit = true;
                     break;
-                }
-                case SDL_KEYDOWN:
-                {
-                    switch (e.key.keysym.sym)
-                    {
-                        // ESC closes
-                        case SDLK_ESCAPE:
-                            quit = true;
-                            break;
 
-                        default:
-                            break;
-
-                    }
-                    break;
-                }
                 default:
-                {
                     break;
                 }
+                break;
+            }
+            default:
+            {
+                break;
+            }
             }
         }
 
-        graphics->ClearBuffers();
+    
 
+        Graphics::ClearBuffers(game.graphics);
 
-    registry.view<BackgroundData, TexturePointerData>().each([this]([[unused]] const auto entity, const auto& BackgroundData, const auto& TextureData) {
-        graphics->DrawTexture(TextureData);
-    });
+        game.registry->view<BackgroundData, TexturePointerData>().each([game]([[unused]] const auto entity, const auto &BackgroundData, const auto &TextureData) {
+            DrawTexture(game.graphics, TextureData);
+        });
 
+        game.registry->view<SDL_Point, TexturePointerData>().each([game]([[unused]] const auto entity, const auto &PositionData, const auto &TextureData) {
+            DrawTexture(game.graphics, TextureData, PositionData);
+        });
 
-    registry.view<SDL_Point, TexturePointerData>().each([this]([[unused]] const auto entity, const auto& PositionData, const auto& TextureData) {
-
-        
-        graphics->DrawTexture(TextureData, PositionData);
-    });
-
-    // timer = Timer::FPS(timer);
-    // std::cout << timer.FPS << std::endl;
+        // timer = Timer::FPS(timer);
+        // std::cout << timer.FPS << std::endl;
         // auto entities = world->GetAllComponentsOfTypes<Texture, Background>();
         // for (auto entity : entities)
         // {
         //     auto texture = std::get<0>(entity);
         //     auto background = std::get<1>(entity);
 
-
         // }
 
-
-       // const auto& background = AssetsManager::Get<Texture>("background");
-       
-       
+        // const auto& background = AssetsManager::Get<Texture>("background");
 
         // currentLevel->Update();
 
         // currentLevel->Draw();
 
-        graphics->SwapBuffers();
+        Graphics::SwapBuffers(game.graphics);
     }
 }
+} // namespace Game
+
+
+
+//struct Game::GameData game;

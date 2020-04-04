@@ -84,7 +84,7 @@ bool hasEnding(std::string const& fullString, std::string const& ending)
     return surf;
 }
 
-void AssetsManager::Init(const std::string& assetsDirectory)
+void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string& assetsDirectory)
 {
     DIR* dirp = opendir(assetsDirectory.c_str());
     struct dirent* dp;
@@ -107,7 +107,7 @@ void AssetsManager::Init(const std::string& assetsDirectory)
          if (hasEnding(nameStr, "png"))
         {
             
-            Textures[rawname] = game->graphics->LoadTextureFromPNG(pathAppend(assetsDirectory, nameStr));
+            Textures[rawname] = LoadTextureFromPNG(graphics, pathAppend(assetsDirectory, nameStr));
             std::cout << "Loaded PNG texture: " << nameStr << std::endl;
         }
         else if (hasEnding(nameStr, "wav"))
@@ -121,7 +121,7 @@ void AssetsManager::Init(const std::string& assetsDirectory)
 
     }
 
-    DEFAULT_TEXTURE = game->graphics->LoadTextureFromPNG(pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
+    DEFAULT_TEXTURE = LoadTextureFromPNG(graphics, pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
 
     if (closedir(dirp) == 0)
     {

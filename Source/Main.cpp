@@ -8,7 +8,6 @@
 #undef main
 int main(int argc, char const *argv[])
 {
-    game = new Game();
-    game->Start();
-    return 0;
+    [[unused]] const auto game = Game::Started();
+    return EXIT_SUCCESS;
 }

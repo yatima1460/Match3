@@ -4,6 +4,7 @@
 #include <map>
 #include <assert.h>
 #include "TexturePointerData.hpp"
+#include "Graphics.hpp"
 
 // TODO: default texture in case of error?
 
@@ -16,7 +17,7 @@ private:
     static TexturePointerData DEFAULT_TEXTURE;
 
 public:
-    static void Init(const std::string &assetsDirectory);
+    static void Init(Graphics::GraphicsData context, const std::string &assetsDirectory);
 
     // template<class T>
     // [[nodiscard]] inline static T& Get(const std::string& name)

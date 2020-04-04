@@ -5,22 +5,23 @@
 #include <entt/entt.hpp>
 #include "Graphics.hpp"
 
-class Game
+namespace Game
 {
-    
-    entt::DefaultRegistry registry;
 
- //static Level* currentLevel;
-    bool quit;
+struct GameData
+{
+    Graphics::GraphicsData graphics;
+    entt::DefaultRegistry* registry = nullptr;
+    
+    bool quit = false;
     SDL_Event e;
-    void Clean();
-    
-
-public:
-    Graphics* graphics;
-    void Start();
-    void MainLoop();
 };
 
+GameData Cleaned(GameData);
+GameData Started();
 
-extern Game* game;
+
+
+} // namespace Game
+
+//extern struct Game::GameData game;
