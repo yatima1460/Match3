@@ -67,6 +67,7 @@ void MainLoop(GameData game)
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
+    
     const auto backgroundTexture = AssetManager::GetTextureData("background");
 
     game.mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
@@ -77,7 +78,9 @@ void MainLoop(GameData game)
 
     
     const auto textureSize = Settings::get<int>("texture_size");
-    while (!game.quit)
+
+    bool quit = false;
+    while (!quit)
     {
         timer = Timer::Ticked(timer);
 
@@ -94,7 +97,7 @@ void MainLoop(GameData game)
                 }
                 if (game.e.button.button == SDL_BUTTON_LEFT)
                 {
-                    // Allow clicking only when world if filled and static && mouse moved at least once
+                    // Allow clicking only when world is filled and static && mouse moved at least once
                     if (World::IsFilledWithGems(game.gemsGrid) && game.mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
@@ -149,7 +152,7 @@ void MainLoop(GameData game)
             case SDL_QUIT:
             {
                 // Pressing the SDLWindow [X] closes
-                game.quit = true;
+                quit = true;
                 break;
             }
             case SDL_KEYDOWN:
@@ -158,7 +161,7 @@ void MainLoop(GameData game)
                 {
                 // ESC closes
                 case SDLK_ESCAPE:
-                    game.quit = true;
+                    quit = true;
                     break;
 
                 default:

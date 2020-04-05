@@ -37,7 +37,6 @@ struct GameData
 
     World::WorldData gemsGrid;
 
-    bool quit = false;
     SDL_Event e;
 };
 
