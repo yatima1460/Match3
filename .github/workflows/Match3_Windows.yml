@@ -12,7 +12,7 @@ jobs:
     - run: mkdir build && cd build && cmake ..
 
     - name: Setup MSBuild.exe
-          uses: warrenbuckley/Setup-MSBuild@v1
+      uses: warrenbuckley/Setup-MSBuild@v1
 
     - name: MSBuild
       working-directory: build
