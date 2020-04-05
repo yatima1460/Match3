@@ -12,6 +12,7 @@ jobs:
     - run: brew update
     - run: brew install sdl2
     - run: brew install sdl2_ttf
+    - run: brew postinstall sdl2
     - run: mkdir build && cd build && cmake ..
     - run: make -C build -j
       
