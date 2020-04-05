@@ -12,11 +12,22 @@ namespace Game
 
 struct SelectionData
 {
+    // Texture to use when the selection hovers on the world
     TexturePointerData OpenTexture;
+
+    // Texture to use when the first selection is locked
     TexturePointerData LockedTexture;
+
+    // World grid location of the first selection
     SDL_Point FirstSelectionLockedGridPosition;
+
+    
     SDL_Point SecondSelectionLockedGridPosition;
+
+    // True when the player clicked on a cell
     bool SelectionLocked = false;
+
+    // Prevent drawing the selection at position 0,0 in the start
     bool MouseMovedAtLeastOnce = false;
 };
 

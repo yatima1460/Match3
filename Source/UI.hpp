@@ -20,5 +20,11 @@ namespace UI
     }
 
 
+inline void DrawTextureAtGridPosition(Graphics::GraphicsData graphics, TexturePointerData texture, SDL_Point gridPosition, const int gridSize)
+{
+    const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPosition, gridSize);
+    Graphics::DrawTexture(graphics, texture, positionToDrawSelection);
+}
+
 
 }

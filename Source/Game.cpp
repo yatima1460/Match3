@@ -85,8 +85,6 @@ void MainLoop(GameData game)
     game.mouseSelection.LockedTexture = AssetsManager::GetTextureData("selection_locked");
 
     game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
-    
-
 
     //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
@@ -107,10 +105,26 @@ void MainLoop(GameData game)
                     if (game.mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto gridLoc = UI::ScreenPositionToGridPosition(mouseLocation, 64);
-                        if (World::IsCoordinateInside( game.gemsGrid, gridLoc))
+                        if (World::IsCoordinateInside(game.gemsGrid, gridLoc))
                         {
-                            game.mouseSelection.FirstSelectionLockedGridPosition = gridLoc;
-                            game.mouseSelection.SelectionLocked = true;
+                            // If the player never selected a cell we allow it
+                            if (!game.mouseSelection.SelectionLocked)
+                            {
+                                // Save the location where the player clicked
+                                game.mouseSelection.FirstSelectionLockedGridPosition = gridLoc;
+
+                                // Set the selection as locked
+                                game.mouseSelection.SelectionLocked = true;
+                            }
+                            else
+                            {
+                                // If the player selected one and clicks again we check if the swap can be done
+                                //TODO: swap check here
+
+                                
+
+                            }
+                            
                         }
                     }
                 }
@@ -118,14 +132,11 @@ void MainLoop(GameData game)
             }
             case SDL_MOUSEMOTION:
             {
-                if (!game.mouseSelection.SelectionLocked)
-                {
-                    mouseLocation.x  = game.e.motion.x;
-                    mouseLocation.y  = game.e.motion.y;
-                    game.mouseSelection.MouseMovedAtLeastOnce = true;
-                }
+                // Update mouse position when mouse is moved
+                mouseLocation.x = game.e.motion.x;
+                mouseLocation.y = game.e.motion.y;
 
-
+                game.mouseSelection.MouseMovedAtLeastOnce = true;
                 break;
             }
             case SDL_QUIT:
@@ -155,7 +166,6 @@ void MainLoop(GameData game)
             }
         }
 
-
         while (!World::IsFilledWithGems(game.gemsGrid))
         {
             game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
@@ -164,9 +174,6 @@ void MainLoop(GameData game)
         }
 
         Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseLocation);
-
-
-       
     }
 }
 
@@ -176,29 +183,28 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
     Graphics::DrawTexture(graphics, background);
     Game::DrawWorld(graphics, world);
 
-    const auto gridPos = UI::ScreenPositionToGridPosition(mouseLocation, 64);
-    if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, gridPos))
-    {
-        const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPos, 64);
-        if (selection.SelectionLocked)
-        {
-            Graphics::DrawTexture(graphics, selection.LockedTexture, positionToDrawSelection);
-        }
-        else
-        {
-           Graphics::DrawTexture(graphics, selection.OpenTexture, positionToDrawSelection);
-        }
-        
-        
-    }
-        
+    const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, 64);
 
-    Graphics::SwapBuffers(graphics);
+    // If selection is locked we draw the first one at the saved click position
+    if (selection.SelectionLocked)
+        UI::DrawTextureAtGridPosition(graphics, selection.LockedTexture, selection.FirstSelectionLockedGridPosition, 64);
+
+    // And then draw a second hovering one, but not outside the world
+    // This could both be the first one hovering, or the second one hovering
+    if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
+        UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, 64);
+
+    Graphics::SendBufferToScreen(graphics);
 }
 
-
-
-
+// void DrawOpenSelectionSquare(Graphics::GraphicsData graphics, World::WorldData world, SelectionData selection, SDL_Point gridPosition)
+// {
+//     if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, gridPosition))
+//     {
+//         const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPosition, 64);
+//         Graphics::DrawTexture(graphics, selection.OpenTexture, positionToDrawSelection);
+//     }
+// }
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
 {
@@ -211,7 +217,9 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
             if (!gem.texture_name.empty())
             {
                 const auto texture = AssetsManager::GetTextureData(gem.texture_name);
-                Graphics::DrawTexture(graphics, texture, {x * 64, y * 64});
+                
+
+                UI::DrawTextureAtGridPosition(graphics, texture, {x,y}, 64);
             }
         }
     }

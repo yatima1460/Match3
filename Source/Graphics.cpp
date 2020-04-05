@@ -13,6 +13,9 @@
 namespace Graphics
 {
 
+
+
+
 GraphicsData Init()
 {
     GraphicsData gd;
@@ -133,7 +136,7 @@ void DrawTexture(GraphicsData graphics, const TexturePointerData &Texture)
     SDL_RenderCopy(graphics.SDLRenderer, Texture.internal, nullptr, &r);
 }
 
-void SwapBuffers(GraphicsData graphics)
+void SendBufferToScreen(GraphicsData graphics)
 {
     assert(graphics.SDLRenderer != nullptr);
     SDL_RenderPresent(graphics.SDLRenderer);

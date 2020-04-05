@@ -43,7 +43,7 @@ void DrawTexture(GraphicsData graphics, const TexturePointerData &texture, const
 /**
      * Swaps the graphics buffer, sends the image to the monitor
      */
-void SwapBuffers(GraphicsData);
+void SendBufferToScreen(GraphicsData);
 
 [[nodiscard]] SDL_Rect MeasureText(GraphicsData graphics, const std::string &String);
 
@@ -56,5 +56,7 @@ void DrawText(GraphicsData graphics, const std::string &Text, SDL_Point Position
 [[nodiscard]] TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path);
 
 [[nodiscard]] TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path);
+
+
 
 } // namespace Graphics
