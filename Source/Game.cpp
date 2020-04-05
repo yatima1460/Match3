@@ -84,7 +84,7 @@ void MainLoop(GameData game)
     game.mouseSelection.OpenTexture = AssetsManager::GetTextureData("selection_open");
     game.mouseSelection.LockedTexture = AssetsManager::GetTextureData("selection_locked");
 
-    game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
+    //game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
 
     //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
@@ -107,7 +107,8 @@ void MainLoop(GameData game)
                 }
                 if (game.e.button.button == SDL_BUTTON_LEFT)
                 {
-                    if (game.mouseSelection.MouseMovedAtLeastOnce)
+                    // Allow clicking only when world if filled and static && mouse moved at least once
+                    if (World::IsFilledWithGems(game.gemsGrid) && game.mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, 64);
                         if (World::IsCoordinateInside(game.gemsGrid, currentMouseGridPosition))
@@ -185,12 +186,12 @@ void MainLoop(GameData game)
             }
         }
 
-        while (!World::IsFilledWithGems(game.gemsGrid))
-        {
+
+        if (World::AllGemsFell(game.gemsGrid))
             game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
-            game.gemsGrid = World::ApplyGravity(game.gemsGrid);
-            game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
-        }
+            
+        game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
+        game.gemsGrid = World::ApplyGravity(game.gemsGrid);
 
         Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseScreenPosition);
     }
@@ -204,14 +205,18 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
 
     const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, 64);
 
-    // If selection is locked we draw the first one at the saved click position
-    if (selection.SelectionLocked)
-        UI::DrawTextureAtGridPosition(graphics, selection.LockedTexture, selection.FirstSelectionLockedGridPosition, 64);
+    // Draw selection square only if the world has done the fallings and is static
+    if (World::IsFilledWithGems(world))
+    {
+        // If selection is locked we draw the first one at the saved click position
+        if (selection.SelectionLocked)
+            UI::DrawTextureAtGridPosition(graphics, selection.LockedTexture, selection.FirstSelectionLockedGridPosition, 64);
 
-    // And then draw a second hovering one, but not outside the world
-    // This could both be the first one hovering, or the second one hovering
-    if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
-        UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, 64);
+        // And then draw a second hovering one, but not outside the world
+        // This could both be the first one hovering, or the second one hovering
+        if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
+            UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, 64);
+    }
 
     Graphics::SendBufferToScreen(graphics);
 }
@@ -237,7 +242,9 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
             {
                 const auto texture = AssetsManager::GetTextureData(gem.texture_name);
 
-                UI::DrawTextureAtGridPosition(graphics, texture, {x, y}, 64);
+                SDL_Point pos = {x,y};
+                Graphics::DrawTexture(graphics, texture, pos*64+gem.drawingOffset);
+               
             }
         }
     }

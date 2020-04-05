@@ -57,3 +57,17 @@ bool operator==(const SDL_Point& A, const SDL_Point& B)
 {
     return A.x == B.x && A.y == B.y;
 }
+
+SDL_Point& operator+(SDL_Point& A, const SDL_Point& B)
+{
+    A.x += B.x;
+    A.y += B.y;
+    return A;
+}
+
+SDL_Point& operator*(SDL_Point& A, const int B)
+{
+    A.x *= B;
+    A.y *= B;
+    return A;
+}

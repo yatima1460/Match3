@@ -22,7 +22,7 @@ WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
     wd.side = side;
 
     wd.data.resize(side);
-    for (size_t i = 0; i < side; i++)
+    for (int i = 0; i < side; i++)
     {
         wd.data[i].resize(side);
     }
@@ -57,6 +57,19 @@ WorldData Swap(WorldData world, SDL_Point position1, SDL_Point position2)
     return world;
 }
 
+bool AllGemsFell(const WorldData world)
+{
+    for (int y = 0; y < world.side; y++)
+    {
+        for (int x = 0; x < world.side; x++)
+        {
+            if (world.data[x][y].IsFalling)
+                return false;
+        }
+    }
+    return true;
+}
+
 WorldData ApplyGravity(WorldData world)
 {
 
@@ -64,12 +77,32 @@ WorldData ApplyGravity(WorldData world)
     {
         for (int x = 0; x < world.side; x++)
         {
+            // If below is empty
             if (world.data[x][y + 1].texture_name == "")
             {
-                world.data[x][y + 1] = world.data[x][y];
-                world.data[x][y].texture_name = "";
+                world.data[x][y].IsFalling = true;
+                const int GRAVITY_SPEED = 4;
+                world.data[x][y].drawingOffset.y += GRAVITY_SPEED;
+                if (world.data[x][y].drawingOffset.y >= 64)
+                {
+                    world.data[x][y].drawingOffset.y = 0;
+                    world.data[x][y + 1] = world.data[x][y];
+                    world.data[x][y].texture_name = "";
+                }
             }
+            else
+            {
+               
+               world.data[x][y].IsFalling = false;
+            }
+            
         }
+    }
+
+    // Ground line is always stable
+    for (int x = 0; x < world.side; x++)
+    {
+        world.data[x][world.side-1].IsFalling = false;
     }
 
     return world;
@@ -86,10 +119,16 @@ WorldData SpawnNewGems(WorldData world)
             assert(randNum < (int)world.gemData.size());
 
             world.data[x][0] = world.gemData[randNum];
+            world.data[x][0].IsFalling = true;
         }
     }
 
     return world;
+}
+
+bool HasHoles(const WorldData world)
+{
+    return !IsFilledWithGems(world);
 }
 
 bool IsFilledWithGems(const WorldData world)
@@ -111,7 +150,7 @@ WorldData RemoveGemsMatches(WorldData world)
 {
     std::vector<std::vector<bool>> toRemove;
     toRemove.resize(world.side);
-    for (size_t i = 0; i < world.side; i++)
+    for (int i = 0; i < world.side; i++)
         toRemove[i].resize(world.side);
 
     for (int y = 0; y < world.side; y++)
