@@ -5,7 +5,7 @@
 #include <assert.h>
 #include "Timer.hpp"
 #include <iostream>
-
+#include "UI.hpp"
 #include <time.h>
 
 namespace Game
@@ -90,6 +90,8 @@ void MainLoop(GameData game)
 
     //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
+    SDL_Point mouseLocation;
+
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
@@ -104,11 +106,11 @@ void MainLoop(GameData game)
                 {
                     if (game.mouseSelection.MouseMovedAtLeastOnce)
                     {
-                        const auto gridLoc = Game::GetMouseGridLocation(64);
-                        if (IsGridPointInsideWorld(gridLoc, game.gemsGrid))
+                        const auto gridLoc = UI::ScreenPositionToGridPosition(mouseLocation, 64);
+                        if (World::IsCoordinateInside( game.gemsGrid, gridLoc))
                         {
                             game.mouseSelection.FirstSelectionLockedGridPosition = gridLoc;
-                            game.mouseSelection.SelectionActive = true;
+                            game.mouseSelection.SelectionLocked = true;
                         }
                     }
                 }
@@ -116,10 +118,10 @@ void MainLoop(GameData game)
             }
             case SDL_MOUSEMOTION:
             {
-                if (!game.mouseSelection.SelectionActive)
+                if (!game.mouseSelection.SelectionLocked)
                 {
-                    game.mouseSelection.FirstSelectionPixelPosition.x = game.e.motion.x;
-                    game.mouseSelection.FirstSelectionPixelPosition.y = game.e.motion.y;
+                    mouseLocation.x  = game.e.motion.x;
+                    mouseLocation.y  = game.e.motion.y;
                     game.mouseSelection.MouseMovedAtLeastOnce = true;
                 }
 
@@ -161,44 +163,42 @@ void MainLoop(GameData game)
             game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
         }
 
-        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection);
+        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseLocation);
 
 
        
     }
 }
 
-void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointerData background, SelectionData selection)
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointerData background, SelectionData selection, SDL_Point mouseLocation)
 {
     Graphics::ClearBuffers(graphics);
     Graphics::DrawTexture(graphics, background);
     Game::DrawWorld(graphics, world);
 
-    if (selection.MouseMovedAtLeastOnce && IsGridPointInsideWorld(GetMouseGridLocation(64), world))
-        Graphics::DrawTexture(graphics, selection.OpenTexture, GetMousePixelLocation(64));
+    const auto gridPos = UI::ScreenPositionToGridPosition(mouseLocation, 64);
+    if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, gridPos))
+    {
+        const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPos, 64);
+        if (selection.SelectionLocked)
+        {
+            Graphics::DrawTexture(graphics, selection.LockedTexture, positionToDrawSelection);
+        }
+        else
+        {
+           Graphics::DrawTexture(graphics, selection.OpenTexture, positionToDrawSelection);
+        }
+        
+        
+    }
+        
 
     Graphics::SwapBuffers(graphics);
 }
 
-bool IsGridPointInsideWorld(SDL_Point pixel, World::WorldData world)
-{
-    return pixel.x >= 0 && pixel.y >= 0 && pixel.x < world.side && pixel.y < world.side;
-}
 
-SDL_Point GetMouseGridLocation(const int textureSize)
-{
-    int mouseX;
-    int mouseY;
-    SDL_GetMouseState(&mouseX, &mouseY);
 
-    return {(mouseX / textureSize), (mouseY / textureSize)};
-}
 
-SDL_Point GetMousePixelLocation(const int textureSize)
-{
-    const auto mwl = GetMouseGridLocation(textureSize);
-    return {mwl.x * textureSize, mwl.y * textureSize};
-}
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
 {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory.h>
 #include <cassert>
+#include <SDL.h>
 
 namespace World
 {
@@ -34,6 +35,13 @@ namespace World
     };
 
     bool IsFilledWithGems(const WorldData world);
+
+
+
+    inline bool IsCoordinateInside(const World::WorldData& world, const SDL_Point& coord)
+    {
+        return coord.x >= 0 && coord.y >= 0 && coord.x < world.side && coord.y < world.side;
+    }
 
     WorldData SpawnNewGems(WorldData world);
     // constexpr int GetIndex(const int x, const int y,const int side);
