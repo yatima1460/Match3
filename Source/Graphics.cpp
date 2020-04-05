@@ -38,7 +38,7 @@ GraphicsData Init()
     if (gd.SDLWindow == nullptr)
     {
         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
+        abort();
     }
 
     SDL_Surface *surface = AssetManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("icon_name")).c_str());
