@@ -21,7 +21,7 @@ std::string pathAppend(const std::string &p1, const std::string &p2)
     sep = '\\';
 #endif
 
-    if (p1[p1.length()] != sep)
+    if (p1[p1.length()-1] != sep)
     {               // Need to add a
         tmp += sep; // path separator
         return (tmp + p2);
