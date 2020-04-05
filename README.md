@@ -18,8 +18,11 @@ Game demo with SDL2, C++11 with functional programming
 2. `sudo apt install build-essential cmake libsdl2-dev libsdl2-ttf-dev`
 
 ### Compile
-3. `mkdir build && cd build && cmake .. && make -j`
-4. `./Output/Match3`
+3. `mkdir build && cd build && cmake ..`
+4. `make -C build -j`
+
+### Run 
+4. `./build/Output/Match3`
 
 ## Windows
 
