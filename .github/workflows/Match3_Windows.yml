@@ -10,5 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: mkdir build && cd build && cmake ..
+    - run: dir D:/a/Match3/Match3/build
     - run: make -C build -j
       
