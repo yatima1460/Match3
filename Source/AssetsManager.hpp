@@ -3,22 +3,20 @@
 
 #include <map>
 #include <assert.h>
-#include "TexturePointerData.hpp"
+#include "TexturePointer.hpp"
 #include "Graphics.hpp"
-
-// TODO: default texture in case of error?
 
 class AssetsManager
 {
 
 private:
-    static std::map<std::string, TexturePointerData> Textures;
-    static TexturePointerData DEFAULT_TEXTURE;
+    static std::map<std::string, TexturePointer::TexturePointerData> Textures;
+    static TexturePointer::TexturePointerData DEFAULT_TEXTURE;
 
 public:
     static void Init(Graphics::GraphicsData context, const std::string &assetsDirectory);
 
-    static TexturePointerData GetTextureData(const std::string &name)
+    static TexturePointer::TexturePointerData GetTextureData(const std::string &name)
     {
 
         auto iter = Textures.find(name);

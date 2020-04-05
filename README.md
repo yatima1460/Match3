@@ -1,8 +1,9 @@
 # Match 3
 
-|Project|Linux|Windows|MacOS|
+|Action|Linux|Windows|MacOS|
 |-------|-----|-------|-----|
-| Match3 | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Linux/badge.svg)](https://github.com/yatima1460/Match3/actions) | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Windows/badge.svg)](https://github.com/yatima1460/Match3/actions) | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_MacOS/badge.svg)](https://github.com/yatima1460/Match3/actions)|
+| build | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Linux/badge.svg)](https://github.com/yatima1460/Match3/actions) | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Windows/badge.svg)](https://github.com/yatima1460/Match3/actions) | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_MacOS/badge.svg)](https://github.com/yatima1460/Match3/actions)|
+| cppcheck | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Linux_cppcheck/badge.svg)](https://github.com/yatima1460/Match3/actions) | N/A | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_MacOS_cppcheck/badge.svg)](https://github.com/yatima1460/Match3/actions)|
 | Match3 Test | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Test_Linux/badge.svg)](https://github.com/yatima1460/Match3/actions) |[![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Test_Windows/badge.svg)](https://github.com/yatima1460/Match3/actions) | [![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Test_MacOS/badge.svg)](https://github.com/yatima1460/Match3/actions)|
 
 Game demo with SDL2, C++11 with functional programming

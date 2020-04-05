@@ -1,23 +1,17 @@
 #pragma once
 
-
 #include <string>
 #include <SDL.h>
+#include "Vector2i.hpp"
 
 namespace Gem
 {
 struct GemData
 {
-    std::string texture_name;
+    std::string id;
 
     // Used for smooth animations
-    SDL_Point drawingOffset;
-
-    bool IsFalling;
-
+    Vector2i drawingOffset;
 };
 
-
-
-
-}
+} // namespace Gem

@@ -8,6 +8,7 @@
 #include "UI.hpp"
 #include <time.h>
 
+
 namespace Game
 {
 
@@ -33,19 +34,6 @@ GameData Started()
 
     // Load all the files inside the input directory
     AssetsManager::Init(game.graphicsContext, Settings::get<std::string>("assets_path"));
-
-    // game.registry = new entt::DefaultRegistry();
-
-    // world = new World();
-    // Entity backgroundEntity = world->CreateEntity();
-    // world->AttachComponent(backgroundEntity, AssetsManager::GetTextureData("background"));
-    // world->AttachComponent(backgroundEntity, new Background());
-
-    // auto background_entity = game.registry->create();
-    // game.registry->assign<TexturePointerData>(background_entity, );
-    // game.registry->assign<BackgroundData>(background_entity);
-
-    //std::vector<std::string> gems = {"ruby", "sapphire", "topaz", "diamond"};
 
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
@@ -88,7 +76,7 @@ void MainLoop(GameData game)
 
     //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
-    SDL_Point mouseScreenPosition;
+    Vector2i mouseScreenPosition;
 
     // Set random seed for gems spawning
     srand(time(NULL));
@@ -188,21 +176,19 @@ void MainLoop(GameData game)
             }
         }
 
-
-       
         game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
-            
+
         game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
-        game.gemsGrid = World::ApplyGravity(game.gemsGrid);
+        game.gemsGrid = World::ApplyGravity(game.gemsGrid, Settings::get<int>("gravityPixelsPerFrame"));
 
         Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseScreenPosition);
     }
 }
 
-void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointerData background, SelectionData selection, SDL_Point mouseLocation)
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation)
 {
     Graphics::ClearBuffers(graphics);
-    Graphics::DrawTexture(graphics, background);
+    Graphics::DrawTexture(graphics, background, {0,0});
     Game::DrawWorld(graphics, world);
 
     const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, 64);
@@ -223,15 +209,6 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
     Graphics::SendBufferToScreen(graphics);
 }
 
-// void DrawOpenSelectionSquare(Graphics::GraphicsData graphics, World::WorldData world, SelectionData selection, SDL_Point gridPosition)
-// {
-//     if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, gridPosition))
-//     {
-//         const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPosition, 64);
-//         Graphics::DrawTexture(graphics, selection.OpenTexture, positionToDrawSelection);
-//     }
-// }
-
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
 {
     for (int y = 0; y < world.side; y++)
@@ -240,13 +217,12 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
         {
 
             const auto gem = world.data[x][y];
-            if (!gem.texture_name.empty())
+            if (!gem.id.empty())
             {
-                const auto texture = AssetsManager::GetTextureData(gem.texture_name);
+                const auto texture = AssetsManager::GetTextureData(gem.id);
 
-                SDL_Point pos = {x,y};
-                Graphics::DrawTexture(graphics, texture, pos*64+gem.drawingOffset);
-               
+                Vector2i pos = {x, y};
+                Graphics::DrawTexture(graphics, texture, pos * 64 + gem.drawingOffset);
             }
         }
     }

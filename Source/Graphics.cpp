@@ -6,15 +6,12 @@
 #include "Graphics.hpp"
 #include <iostream>
 #include "Game.hpp"
-#include "TexturePointerData.hpp"
+#include "TexturePointer.hpp"
 
 #include "AssetsManager.hpp"
 
 namespace Graphics
 {
-
-
-
 
 GraphicsData Init()
 {
@@ -34,7 +31,7 @@ GraphicsData Init()
     gd.SDLWindow = SDL_CreateWindow(
         Settings::get<std::string>("window_name").c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        64*10, 64*10,
+        64 * 10, 64 * 10,
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_RENDERER_ACCELERATED);
     if (gd.SDLWindow == nullptr)
     {
@@ -129,14 +126,7 @@ GraphicsData Cleaned(GraphicsData graphics)
     return graphics;
 }
 
-void DrawTexture(GraphicsData graphics, const TexturePointerData &Texture)
-{
-    SDL_Rect r = Texture.GetSDLRect();
-    assert(r.w != 0);
-    assert(r.h != 0);
-    assert(graphics.SDLRenderer != nullptr);
-    SDL_RenderCopy(graphics.SDLRenderer, Texture.internal, nullptr, &r);
-}
+
 
 void SendBufferToScreen(GraphicsData graphics)
 {
@@ -151,9 +141,9 @@ void ClearBuffers(GraphicsData graphics)
     SDL_RenderClear(graphics.SDLRenderer);
 }
 
-} // namespace Graphics
 
-// void DrawText(GraphicsData graphics, const std::string& Text, SDL_Point Position, SDL_Color Color, TTF_Font& Font)
+
+// void DrawText(GraphicsData graphics, const std::string& Text, Vector2i Position, SDL_Color Color, TTF_Font& Font)
 // {
 //     SDL_Surface* creditsSurface = TTF_RenderText_Blended(&Font, Text.c_str(), Color);
 
@@ -182,17 +172,17 @@ void ClearBuffers(GraphicsData graphics)
 //     }
 // }
 
-// void Graphics::DrawText(const std::string& Text, SDL_Point Position, SDL_Color Color)
+// void Graphics::DrawText(const std::string& Text, Vector2i Position, SDL_Color Color)
 // {
 //     Graphics::DrawText(Text, Position, Color, Graphics::GetDefaultFont());
 // }
 
-TexturePointerData Graphics::LoadTextureFromPNG(GraphicsData graphics, const std::string path)
+TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path)
 {
     SDL_Surface *surf = AssetsManager::LoadSDLSurfaceFromPNG(path);
     assert(surf != nullptr);
 
-    TexturePointerData td;
+    TexturePointer::TexturePointerData td;
     td.internal = SDL_CreateTextureFromSurface(graphics.SDLRenderer, surf);
     td.Path = path;
 
@@ -200,10 +190,10 @@ TexturePointerData Graphics::LoadTextureFromPNG(GraphicsData graphics, const std
     return td;
 }
 
-TexturePointerData Graphics::LoadTextureFromBMP(GraphicsData graphics, const std::string path)
+TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path)
 {
 
-    TexturePointerData td;
+    TexturePointer::TexturePointerData td;
     td.Path = path;
     assert(!path.empty());
     SDL_Surface *background_surface = SDL_LoadBMP(path.c_str());
@@ -218,7 +208,7 @@ TexturePointerData Graphics::LoadTextureFromBMP(GraphicsData graphics, const std
     return td;
 }
 
-SDL_Rect Graphics::MeasureText(const std::string &String, TTF_Font &Font)
+SDL_Rect MeasureText(const std::string &String, TTF_Font &Font)
 {
     SDL_Surface *creditsSurface = TTF_RenderText_Blended(&Font, String.c_str(), {255, 255, 255, 255});
 
@@ -234,7 +224,7 @@ SDL_Rect Graphics::MeasureText(const std::string &String, TTF_Font &Font)
     return empty;
 }
 
-SDL_Rect Graphics::MeasureText(GraphicsData graphics, const std::string &String)
+SDL_Rect MeasureText(GraphicsData graphics, const std::string &String)
 {
     assert(graphics.NormalFont != nullptr);
     return Graphics::MeasureText(String, *graphics.NormalFont);
@@ -253,19 +243,23 @@ void Graphics::DrawTexture(Texture& texture, SDL_Rect* dest)
 }
 */
 
-void Graphics::DrawTexture(GraphicsData graphics, const TexturePointerData &texture, const SDL_Point &point)
+
+void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &texture, const Vector2i &point)
 {
 
-    SDL_Rect rec = texture.GetSDLRect();
-    assert(rec.w != 0);
-    assert(rec.h != 0);
+    Vector2i s = TexturePointer::GetSize(texture);
+    assert(s.x != 0);
+    assert(s.y != 0);
 
-    rec.x = point.x;
-    rec.y = point.y;
+    SDL_Rect r = {point.x,point.y,s.x,s.y};
+
 
     auto sdlt = texture.internal;
     assert(sdlt != nullptr);
 
     assert(graphics.SDLRenderer != nullptr);
-    SDL_RenderCopy(graphics.SDLRenderer, sdlt, nullptr, &rec);
+    SDL_RenderCopy(graphics.SDLRenderer, sdlt, nullptr, &r);
 }
+
+
+} // namespace Graphics

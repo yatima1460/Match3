@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TexturePointerData.hpp"
+#include "TexturePointer.hpp"
 #include <SDL_ttf.h>
 
 namespace Graphics
@@ -29,7 +29,7 @@ void ClearBuffers(GraphicsData graphics);
      * Draws a texture to point 0,0, using the texture size as destination rectangle
      * @param Texture
      */
-void DrawTexture(GraphicsData graphics, const TexturePointerData &Texture);
+void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &Texture);
 
 // void DrawTexture(Texture& texture, SDL_Rect* dest);
 
@@ -38,7 +38,7 @@ void DrawTexture(GraphicsData graphics, const TexturePointerData &Texture);
      * @param texture
      * @param point
      */
-void DrawTexture(GraphicsData graphics, const TexturePointerData &texture, const SDL_Point &point);
+void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &texture, const Vector2i &point);
 
 /**
      * Swaps the graphics buffer, sends the image to the monitor
@@ -47,16 +47,12 @@ void SendBufferToScreen(GraphicsData);
 
 [[nodiscard]] SDL_Rect MeasureText(GraphicsData graphics, const std::string &String);
 
-void DrawText(GraphicsData graphics, const std::string &Text, SDL_Point Position, SDL_Color Color);
-
-void DrawText(GraphicsData graphics, const std::string &Text, SDL_Point Position, SDL_Color Color, TTF_Font &Font);
+void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position, SDL_Color Color, TTF_Font &Font);
 
 [[nodiscard]] SDL_Rect MeasureText(const std::string &String, TTF_Font &Font);
 
-[[nodiscard]] TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path);
+[[nodiscard]] TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path);
 
-[[nodiscard]] TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path);
-
-
+[[nodiscard]] TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path);
 
 } // namespace Graphics

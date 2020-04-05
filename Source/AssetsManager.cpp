@@ -8,8 +8,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-std::map<std::string, TexturePointerData> AssetsManager::Textures;
-TexturePointerData AssetsManager::DEFAULT_TEXTURE;
+std::map<std::string, TexturePointer::TexturePointerData> AssetsManager::Textures;
+TexturePointer::TexturePointerData AssetsManager::DEFAULT_TEXTURE;
 
 std::string pathAppend(const std::string &p1, const std::string &p2)
 {
@@ -21,7 +21,7 @@ std::string pathAppend(const std::string &p1, const std::string &p2)
     sep = '\\';
 #endif
 
-    if (p1[p1.length()-1] != sep)
+    if (p1[p1.length() - 1] != sep)
     {               // Need to add a
         tmp += sep; // path separator
         return (tmp + p2);
@@ -93,13 +93,13 @@ void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string &ass
         const size_t lastindex = nameStr.find_last_of('.');
         const std::string rawname = nameStr.substr(0, lastindex);
 
-        // if (hasEnding(nameStr, "bmp"))
-        // {
+        if (hasEnding(nameStr, "bmp"))
+        {
 
-        //     Textures[rawname] = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, nameStr));
-        //     std::cout << "Loaded BMP texture: " << nameStr << std::endl;
+            Textures[rawname] = LoadTextureFromBMP(graphics, pathAppend(assetsDirectory, nameStr));
+            std::cout << "Loaded BMP texture: " << nameStr << std::endl;
 
-        // }
+        }
         if (hasEnding(nameStr, "png"))
         {
 
@@ -131,7 +131,7 @@ void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string &ass
 void AssetsManager::Clean()
 {
 
-    for (std::pair<std::string, TexturePointerData> element : Textures)
+    for (std::pair<std::string, TexturePointer::TexturePointerData> element : Textures)
     {
 
         SDL_DestroyTexture(element.second.internal);
