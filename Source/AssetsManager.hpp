@@ -39,6 +39,7 @@ public:
     inline static const TexturePointer::TexturePointerData &GetTextureData(const std::string name)
     {
         assert(!texture_files.empty());
+        assert(texture_files[name].internal != nullptr);
         return texture_files[name];
     }
     // static const Font& GetFont(const std::string name);

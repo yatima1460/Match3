@@ -199,14 +199,25 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
     // Draw selection square only if the world has done the fallings and is static
     if (World::IsFilledWithGems(world))
     {
-        // If selection is locked we draw the first one at the saved click position
+        
         if (selection.SelectionLocked)
+        {
+            // If selection is locked we draw the first one at the saved click position
             UI::DrawTextureAtGridPosition(graphics, selection.LockedTexture, selection.FirstSelectionLockedGridPosition, textureSize);
 
-        // And then draw a second hovering one, but not outside the world
-        // This could both be the first one hovering, or the second one hovering
-        if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
-            UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, textureSize);
+            // And the second one, but only in nearby cells
+            if (UI::IsNearbyTaxiDistance(selection.FirstSelectionLockedGridPosition, currentMouseGridPosition) && World::IsCoordinateInside(world, currentMouseGridPosition))
+                UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, textureSize);
+        }
+        else
+        {
+            // If selection is not locked draw a selection on the cell
+            if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
+                UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, textureSize);
+        }
+        
+      
+
     }
 
     Graphics::SendBufferToScreen(graphics);

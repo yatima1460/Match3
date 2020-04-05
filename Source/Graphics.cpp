@@ -185,6 +185,7 @@ TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, con
 
     TexturePointer::TexturePointerData td;
     td.internal = SDL_CreateTextureFromSurface(graphics.SDLRenderer, surf);
+    assert(td.internal != nullptr);
     td.Path = path;
 
     SDL_FreeSurface(surf);
