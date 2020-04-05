@@ -11,7 +11,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output)
 
 # Create project
 project(Match3)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 include_directories(Include)
 file(GLOB_RECURSE SOURCES Source/*.cpp)
 add_executable(Match3 ${SOURCES})
