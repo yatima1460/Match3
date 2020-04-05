@@ -14,7 +14,7 @@ struct GameData
 {
     Graphics::GraphicsData graphics;
 
-    
+    SDL_Point selection_pos;
     World::WorldData world;
     
     bool quit = false;
@@ -23,6 +23,10 @@ struct GameData
 
 GameData Cleaned(GameData);
 GameData Started();
+
+bool IsGridPointInsideWorld(SDL_Point pixel, World::WorldData world);
+SDL_Point GetMouseGridLocation(const int textureSize);
+SDL_Point GetMousePixelLocation(const int textureSize);
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world);
 

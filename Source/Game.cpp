@@ -83,25 +83,61 @@ void MainLoop(GameData game)
     Timer::TimerData timer;
     const auto background = AssetsManager::GetTextureData("background");
 
+    const auto selection = AssetsManager::GetTextureData("selection");
+
+
+    game.world = World::RemoveMatches(game.world);
+    game.selection_pos = {-1,-1};
+
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
 
         Game::PollEvents(game);
 
+    
 
-        game.world = World::RemoveMatches(game.world);
-        game.world = World::ApplyGravity(game.world);
-        game.world = World::SpawnNewGems(game.world);
+        while(!World::IsFilled(game.world))
+        {
+            game.world = World::RemoveMatches(game.world);
+            game.world = World::ApplyGravity(game.world);
+            game.world = World::SpawnNewGems(game.world);
+        }
+
 
         Graphics::ClearBuffers(game.graphics);
         Graphics::DrawTexture(game.graphics, background);
         Game::DrawWorld(game.graphics, game.world);
+
+
+        if (IsGridPointInsideWorld(GetMouseGridLocation(64), game.world))
+            Graphics::DrawTexture(game.graphics, selection,GetMousePixelLocation(64));
         
         Graphics::SwapBuffers(game.graphics);
         
 
     }
+}
+
+bool IsGridPointInsideWorld(SDL_Point pixel, World::WorldData world)
+{
+    return pixel.x >= 0 && pixel.y >= 0 && pixel.x < world.side && pixel.y < world.side;
+}
+
+SDL_Point GetMouseGridLocation(const int textureSize)
+{
+    int mouseX;
+    int mouseY;
+    SDL_GetMouseState(&mouseX,&mouseY);
+
+
+    return {(mouseX/textureSize), (mouseY/textureSize)};
+}
+
+SDL_Point GetMousePixelLocation(const int textureSize)
+{
+    const auto mwl = GetMouseGridLocation(textureSize);
+    return {mwl.x*textureSize, mwl.y*textureSize};
 }
 
 void PollEvents(GameData& game)
@@ -110,6 +146,13 @@ void PollEvents(GameData& game)
     {
         switch (game.e.type)
         {
+        case SDL_MOUSEMOTION:
+        {
+            game.selection_pos.x = game.e.motion.x;
+            game.selection_pos.y = game.e.motion.y;
+
+            break;
+        }
         case SDL_QUIT:
         {
             // Pressing the SDLWindow [X] closes
