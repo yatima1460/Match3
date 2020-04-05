@@ -49,8 +49,6 @@ GameData Started()
 
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    
-
     game.world = World::Generate(10, gems);
 
     MainLoop(game);
@@ -83,40 +81,99 @@ void MainLoop(GameData game)
     Timer::TimerData timer;
     const auto background = AssetsManager::GetTextureData("background");
 
-    const auto selection = AssetsManager::GetTextureData("selection");
-
+    game.mouse_selection.OpenTexture = AssetsManager::GetTextureData("selection_open");
+    game.mouse_selection.LockedTexture = AssetsManager::GetTextureData("selection_locked");
 
     game.world = World::RemoveMatches(game.world);
-    game.selection_pos = {-1,-1};
+    
+
+
+    //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
 
-        Game::PollEvents(game);
+        while (SDL_PollEvent(&game.e) != 0)
+        {
+            switch (game.e.type)
+            {
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                if (game.e.button.button == SDL_BUTTON_LEFT)
+                {
+                    if (game.mouse_selection.MouseMovedAtLeastOnce)
+                    {
+                        const auto gridLoc = Game::GetMouseGridLocation(64);
+                        if (IsGridPointInsideWorld(gridLoc, game.world))
+                        {
+                            game.mouse_selection.FirstSelectionLockedGridPosition = gridLoc;
+                            game.mouse_selection.SelectionActive = true;
+                        }
+                    }
+                }
+                break;
+            }
+            case SDL_MOUSEMOTION:
+            {
+                game.mouse_selection.FirstSelectionPixelPosition.x = game.e.motion.x;
+                game.mouse_selection.FirstSelectionPixelPosition.y = game.e.motion.y;
+                game.mouse_selection.MouseMovedAtLeastOnce = true;
 
-    
+                break;
+            }
+            case SDL_QUIT:
+            {
+                // Pressing the SDLWindow [X] closes
+                game.quit = true;
+                break;
+            }
+            case SDL_KEYDOWN:
+            {
+                switch (game.e.key.keysym.sym)
+                {
+                // ESC closes
+                case SDLK_ESCAPE:
+                    game.quit = true;
+                    break;
 
-        while(!World::IsFilled(game.world))
+                default:
+                    break;
+                }
+                break;
+            }
+            default:
+            {
+                break;
+            }
+            }
+        }
+
+
+        while (!World::IsFilled(game.world))
         {
             game.world = World::RemoveMatches(game.world);
             game.world = World::ApplyGravity(game.world);
             game.world = World::SpawnNewGems(game.world);
         }
 
-
-        Graphics::ClearBuffers(game.graphics);
-        Graphics::DrawTexture(game.graphics, background);
-        Game::DrawWorld(game.graphics, game.world);
+        Game::DrawLevel(game.graphics, game.world, background, game.mouse_selection);
 
 
-        if (IsGridPointInsideWorld(GetMouseGridLocation(64), game.world))
-            Graphics::DrawTexture(game.graphics, selection,GetMousePixelLocation(64));
-        
-        Graphics::SwapBuffers(game.graphics);
-        
-
+       
     }
+}
+
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointerData background, SelectionData selection)
+{
+    Graphics::ClearBuffers(graphics);
+    Graphics::DrawTexture(graphics, background);
+    Game::DrawWorld(graphics, world);
+
+    if (selection.MouseMovedAtLeastOnce && IsGridPointInsideWorld(GetMouseGridLocation(64), world))
+        Graphics::DrawTexture(graphics, selection.OpenTexture, GetMousePixelLocation(64));
+
+    Graphics::SwapBuffers(graphics);
 }
 
 bool IsGridPointInsideWorld(SDL_Point pixel, World::WorldData world)
@@ -128,66 +185,24 @@ SDL_Point GetMouseGridLocation(const int textureSize)
 {
     int mouseX;
     int mouseY;
-    SDL_GetMouseState(&mouseX,&mouseY);
+    SDL_GetMouseState(&mouseX, &mouseY);
 
-
-    return {(mouseX/textureSize), (mouseY/textureSize)};
+    return {(mouseX / textureSize), (mouseY / textureSize)};
 }
 
 SDL_Point GetMousePixelLocation(const int textureSize)
 {
     const auto mwl = GetMouseGridLocation(textureSize);
-    return {mwl.x*textureSize, mwl.y*textureSize};
-}
-
-void PollEvents(GameData& game)
-{
-    while (SDL_PollEvent(&game.e) != 0)
-    {
-        switch (game.e.type)
-        {
-        case SDL_MOUSEMOTION:
-        {
-            game.selection_pos.x = game.e.motion.x;
-            game.selection_pos.y = game.e.motion.y;
-
-            break;
-        }
-        case SDL_QUIT:
-        {
-            // Pressing the SDLWindow [X] closes
-            game.quit = true;
-            break;
-        }
-        case SDL_KEYDOWN:
-        {
-            switch (game.e.key.keysym.sym)
-            {
-            // ESC closes
-            case SDLK_ESCAPE:
-                game.quit = true;
-                break;
-
-            default:
-                break;
-            }
-            break;
-        }
-        default:
-        {
-            break;
-        }
-        }
-    }
+    return {mwl.x * textureSize, mwl.y * textureSize};
 }
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
 {
-for (int y = 0; y < world.side; y++)
-        {
-    for (int x = 0; x < world.side; x++)
+    for (int y = 0; y < world.side; y++)
     {
-        
+        for (int x = 0; x < world.side; x++)
+        {
+
             const auto gem = world.data[x][y];
             if (!gem.texture_name.empty())
             {

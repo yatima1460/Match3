@@ -10,11 +10,25 @@
 namespace Game
 {
 
+struct SelectionData
+{
+    TexturePointerData OpenTexture;
+    TexturePointerData LockedTexture;
+    SDL_Point FirstSelectionPixelPosition;
+    SDL_Point SecondSelectionPixelPosition;
+    SDL_Point FirstSelectionLockedGridPosition;
+    SDL_Point SecondSelectionLockedGridPosition;
+    bool SelectionActive = false;
+    bool MouseMovedAtLeastOnce = false;
+};
+
 struct GameData
 {
     Graphics::GraphicsData graphics;
 
-    SDL_Point selection_pos;
+
+    SelectionData mouse_selection;
+
     World::WorldData world;
     
     bool quit = false;
@@ -24,13 +38,13 @@ struct GameData
 GameData Cleaned(GameData);
 GameData Started();
 
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointerData background, SelectionData selection);
 bool IsGridPointInsideWorld(SDL_Point pixel, World::WorldData world);
 SDL_Point GetMouseGridLocation(const int textureSize);
 SDL_Point GetMousePixelLocation(const int textureSize);
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world);
 
-void PollEvents(GameData& game);
 
 } // namespace Game
 
