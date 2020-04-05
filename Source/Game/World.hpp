@@ -33,7 +33,7 @@ WorldData Generate(const int side, const std::vector<Gem::GemData> gemData);
 
 WorldData RemoveGemsMatches(WorldData world);
 
-WorldData ApplyGravity(WorldData world, const int pixelsPerFrame);
+WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int textureSize);
 
 // Returns true if the position can't be affected by gravity
 bool IsPositionStable(WorldData world, Vector2i position);

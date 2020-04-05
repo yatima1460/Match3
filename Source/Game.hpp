@@ -44,8 +44,8 @@ struct GameData
 GameData Cleaned(GameData);
 GameData Started();
 
-void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation);
-void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world);
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation, const int textureSize);
+void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world, const int textureSize);
 
 } // namespace Game
 

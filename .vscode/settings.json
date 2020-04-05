@@ -72,6 +72,7 @@
         "codecvt": "cpp",
         "bitset": "cpp",
         "regex": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "cassert": "cpp"
     }
 }

@@ -55,7 +55,7 @@ WorldData Swap(WorldData world, Vector2i position1, Vector2i position2)
     return world;
 }
 
-WorldData ApplyGravity(WorldData world, const int pixelsPerFrame)
+WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int textureSize)
 {
 
     for (int y = 0; y < world.side - 1; y++)
@@ -67,7 +67,7 @@ WorldData ApplyGravity(WorldData world, const int pixelsPerFrame)
             {
 
                 world.data[x][y].drawingOffset.y += pixelsPerFrame;
-                if (world.data[x][y].drawingOffset.y >= 64)
+                if (world.data[x][y].drawingOffset.y >= textureSize)
                 {
                     world.data[x][y].drawingOffset.y = 0;
                     world.data[x][y + 1] = world.data[x][y];

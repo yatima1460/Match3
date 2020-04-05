@@ -37,7 +37,7 @@ GameData Started()
 
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    game.gemsGrid = World::Generate(10, gems);
+    game.gemsGrid = World::Generate(Settings::get<int>("world_size"), gems);
 
     MainLoop(game);
     game = Cleaned(game);
@@ -72,14 +72,11 @@ void MainLoop(GameData game)
     game.mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
     game.mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
 
-    //game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
-
-    //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
     Vector2i mouseScreenPosition;
 
-    // Set random seed for gems spawning
-    srand(time(NULL));
+    
+    const auto textureSize = Settings::get<int>("texture_size");
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
@@ -100,7 +97,7 @@ void MainLoop(GameData game)
                     // Allow clicking only when world if filled and static && mouse moved at least once
                     if (World::IsFilledWithGems(game.gemsGrid) && game.mouseSelection.MouseMovedAtLeastOnce)
                     {
-                        const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, 64);
+                        const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
                         if (World::IsCoordinateInside(game.gemsGrid, currentMouseGridPosition))
                         {
                             // If the player never selected a cell we allow it
@@ -179,37 +176,37 @@ void MainLoop(GameData game)
         game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
 
         game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
-        game.gemsGrid = World::ApplyGravity(game.gemsGrid, Settings::get<int>("gravityPixelsPerFrame"));
+        game.gemsGrid = World::ApplyGravity(game.gemsGrid, Settings::get<int>("gravityPixelsPerFrame"), textureSize);
 
-        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseScreenPosition);
+        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseScreenPosition, textureSize);
     }
 }
 
-void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation)
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation, const int textureSize)
 {
     Graphics::ClearBuffers(graphics);
     Graphics::DrawTexture(graphics, background, {0,0});
-    Game::DrawWorld(graphics, world);
+    Game::DrawWorld(graphics, world, textureSize);
 
-    const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, 64);
+    const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, textureSize);
 
     // Draw selection square only if the world has done the fallings and is static
     if (World::IsFilledWithGems(world))
     {
         // If selection is locked we draw the first one at the saved click position
         if (selection.SelectionLocked)
-            UI::DrawTextureAtGridPosition(graphics, selection.LockedTexture, selection.FirstSelectionLockedGridPosition, 64);
+            UI::DrawTextureAtGridPosition(graphics, selection.LockedTexture, selection.FirstSelectionLockedGridPosition, textureSize);
 
         // And then draw a second hovering one, but not outside the world
         // This could both be the first one hovering, or the second one hovering
         if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
-            UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, 64);
+            UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, textureSize);
     }
 
     Graphics::SendBufferToScreen(graphics);
 }
 
-void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
+void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world, const int textureSize)
 {
     for (int y = 0; y < world.side; y++)
     {
@@ -222,7 +219,7 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
                 const auto texture = AssetManager::GetTextureData(gem.id);
 
                 Vector2i pos = {x, y};
-                Graphics::DrawTexture(graphics, texture, pos * 64 + gem.drawingOffset);
+                Graphics::DrawTexture(graphics, texture, pos * textureSize + gem.drawingOffset);
             }
         }
     }
