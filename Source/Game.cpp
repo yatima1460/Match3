@@ -91,6 +91,8 @@ void MainLoop(GameData game)
 
 
         game.world = World::RemoveMatches(game.world);
+        game.world = World::ApplyGravity(game.world);
+        game.world = World::SpawnNewGems(game.world);
 
         Graphics::ClearBuffers(game.graphics);
         Graphics::DrawTexture(game.graphics, background);

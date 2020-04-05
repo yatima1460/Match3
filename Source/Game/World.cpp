@@ -17,6 +17,8 @@ WorldData Generate(int side, std::vector<Gem::GemData> gemData)
     assert(gemData.size() != 0);
     WorldData wd;
 
+    wd.gemData = gemData;
+
     wd.side = side;
 
     wd.data = new Gem::GemData *[side];
@@ -37,6 +39,41 @@ WorldData Generate(int side, std::vector<Gem::GemData> gemData)
     }
 
     return wd;
+}
+
+WorldData ApplyGravity(WorldData world)
+{
+
+    for (int y = 0; y < world.side - 1; y++)
+    {
+        for (int x = 0; x < world.side; x++)
+        {
+            if (world.data[x][y + 1].texture_name == "")
+            {
+                world.data[x][y + 1] = world.data[x][y];
+                world.data[x][y].texture_name = "";
+            }
+        }
+    }
+
+    return world;
+}
+
+WorldData SpawnNewGems(WorldData world)
+{
+    for (int x = 0; x < world.side; x++)
+    {
+        if (world.data[x][0].texture_name == "")
+        {
+            int randNum = rand() % (world.gemData.size());
+            assert(randNum >= 0);
+            assert(randNum < (int)world.gemData.size());
+
+            world.data[x][0] = world.gemData[randNum];
+        }
+    }
+
+    return world;
 }
 
 WorldData RemoveMatches(WorldData world)
@@ -79,14 +116,14 @@ WorldData RemoveMatches(WorldData world)
         {
 
             const auto current = world.data[x][y];
-            const auto next = world.data[x][y+1];
-            const auto nextnext = world.data[x][y+2];
+            const auto next = world.data[x][y + 1];
+            const auto nextnext = world.data[x][y + 2];
 
             if (current.texture_name == next.texture_name && next.texture_name == nextnext.texture_name)
             {
                 toRemove[x][y] = true;
-                toRemove[x][y+1] = true;
-                toRemove[x][y+2] = true;
+                toRemove[x][y + 1] = true;
+                toRemove[x][y + 2] = true;
             }
         }
     }
