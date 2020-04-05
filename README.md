@@ -34,3 +34,12 @@ TODO
 TODO
 
 
+# Credits
+
+License doesn't apply to assets
+
+- Diamond icon from here:
+https://www.iconexperience.com/g_collection/icons/?icon=diamond
+
+- Background image from here:
+    https://kr.best-wallpaper.net/Abstract-geometric-blue-lines-bright_wallpapers.html
