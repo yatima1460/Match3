@@ -21,7 +21,7 @@ std::string Settings::toString()
 {
     std::stringstream ss;
 
-    for (const auto& p : config)
+    for (const auto &p : config)
     {
         ss << p.first << "=" << p.second << std::endl;
     }
@@ -34,7 +34,6 @@ bool Settings::parseFile(std::string contents)
 
     if (contents.length() == 0)
         throw std::invalid_argument("Settings.ini content is empty!");
-
 
     const auto oldConfig = config;
     config.clear();
@@ -75,7 +74,6 @@ bool Settings::parseFile(std::string contents)
 bool Settings::load()
 {
 
-
     std::ifstream file("Settings.ini");
 
     if (file)
@@ -86,12 +84,13 @@ bool Settings::load()
 
         file.close();
 
-        
         loaded = parseFile(buffer.str());
         return loaded;
-    } else
+    }
+    else
     {
-        std::cout << "ERROR: can't load settings file" << std::endl << std::endl;
+        std::cout << "ERROR: can't load settings file" << std::endl
+                  << std::endl;
         return false;
     }
 }

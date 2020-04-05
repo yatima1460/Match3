@@ -10,10 +10,8 @@
 
 #include "AssetsManager.hpp"
 
-
 namespace Graphics
 {
-
 
 GraphicsData Init()
 {
@@ -21,11 +19,9 @@ GraphicsData Init()
     //Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
-        std::cerr << "SDL could not initialize! " <<  SDL_GetError() << std::endl;
+        std::cerr << "SDL could not initialize! " << SDL_GetError() << std::endl;
         abort();
     }
-
-    
 
     // SDLWindow = SDL_CreateWindow(
     //         Settings::get<std::string>("window_name").c_str(),
@@ -43,7 +39,7 @@ GraphicsData Init()
         exit(EXIT_FAILURE);
     }
 
-    SDL_Surface *surface = AssetsManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path")+"/"+ Settings::get<std::string>("icon_name")).c_str());
+    SDL_Surface *surface = AssetsManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("icon_name")).c_str());
     if (surface == nullptr)
         std::cerr << "Application icon is NULL" << std::endl;
     else
@@ -54,7 +50,7 @@ GraphicsData Init()
 
     TTF_Init();
     const auto fontPath =
-            Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("asset_font_name");
+        Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("asset_font_name");
     gd.SmallFont = TTF_OpenFont(fontPath.c_str(), 24);
     gd.NormalFont = TTF_OpenFont(fontPath.c_str(), 32);
     gd.BigFont = TTF_OpenFont(fontPath.c_str(), 48);
@@ -73,7 +69,6 @@ GraphicsData Init()
         fprintf(stderr, "error: BigFont not found\n");
         exit(EXIT_FAILURE);
     }
-
 
     // Get SDLWindow surface
     gd.ScreenSurface = SDL_GetWindowSurface(gd.SDLWindow);
@@ -102,7 +97,6 @@ GraphicsData Init()
     return gd;
 }
 
-
 GraphicsData Cleaned(GraphicsData graphics)
 {
     assert(graphics.SmallFont != nullptr);
@@ -115,7 +109,6 @@ GraphicsData Cleaned(GraphicsData graphics)
     graphics.NormalFont = nullptr;
     graphics.BigFont = nullptr;
     std::cout << "SDL2TTF cleaned" << std::endl;
-
 
     SDL_GL_DeleteContext(graphics.GLContext);
     std::cout << "SDL2 GL Context cleaned" << std::endl;
@@ -131,9 +124,7 @@ GraphicsData Cleaned(GraphicsData graphics)
     std::cout << "SDL cleaned" << std::endl;
 }
 
-
-
-void DrawTexture(GraphicsData graphics, const TexturePointerData& Texture)
+void DrawTexture(GraphicsData graphics, const TexturePointerData &Texture)
 {
     SDL_Rect r = Texture.GetSDLRect();
     assert(r.w != 0);
@@ -142,15 +133,11 @@ void DrawTexture(GraphicsData graphics, const TexturePointerData& Texture)
     SDL_RenderCopy(graphics.SDLRenderer, Texture.internal, nullptr, &r);
 }
 
-
-
 void SwapBuffers(GraphicsData graphics)
 {
     assert(graphics.SDLRenderer != nullptr);
     SDL_RenderPresent(graphics.SDLRenderer);
 }
-
-
 
 void ClearBuffers(GraphicsData graphics)
 {
@@ -159,10 +146,7 @@ void ClearBuffers(GraphicsData graphics)
     SDL_RenderClear(graphics.SDLRenderer);
 }
 
-
-}
- 
-
+} // namespace Graphics
 
 // void DrawText(GraphicsData graphics, const std::string& Text, SDL_Point Position, SDL_Color Color, TTF_Font& Font)
 // {
@@ -193,20 +177,18 @@ void ClearBuffers(GraphicsData graphics)
 //     }
 // }
 
-
 // void Graphics::DrawText(const std::string& Text, SDL_Point Position, SDL_Color Color)
 // {
 //     Graphics::DrawText(Text, Position, Color, Graphics::GetDefaultFont());
 // }
 
-
 TexturePointerData Graphics::LoadTextureFromPNG(GraphicsData graphics, const std::string path)
 {
-    SDL_Surface* surf = AssetsManager::LoadSDLSurfaceFromPNG(path);
+    SDL_Surface *surf = AssetsManager::LoadSDLSurfaceFromPNG(path);
     assert(surf != nullptr);
 
     TexturePointerData td;
-    td.internal =  SDL_CreateTextureFromSurface(graphics.SDLRenderer, surf);
+    td.internal = SDL_CreateTextureFromSurface(graphics.SDLRenderer, surf);
     td.Path = path;
 
     SDL_FreeSurface(surf);
@@ -219,7 +201,7 @@ TexturePointerData Graphics::LoadTextureFromBMP(GraphicsData graphics, const std
     TexturePointerData td;
     td.Path = path;
     assert(!path.empty());
-    SDL_Surface* background_surface = SDL_LoadBMP(path.c_str());
+    SDL_Surface *background_surface = SDL_LoadBMP(path.c_str());
     assert(background_surface != nullptr);
 
     td.internal = SDL_CreateTextureFromSurface(graphics.SDLRenderer, background_surface);
@@ -231,9 +213,9 @@ TexturePointerData Graphics::LoadTextureFromBMP(GraphicsData graphics, const std
     return td;
 }
 
-SDL_Rect Graphics::MeasureText(const std::string& String, TTF_Font& Font)
+SDL_Rect Graphics::MeasureText(const std::string &String, TTF_Font &Font)
 {
-    SDL_Surface* creditsSurface = TTF_RenderText_Blended(&Font, String.c_str(), {255, 255, 255, 255});
+    SDL_Surface *creditsSurface = TTF_RenderText_Blended(&Font, String.c_str(), {255, 255, 255, 255});
 
     // is null if string has length zero
     if (creditsSurface)
@@ -247,12 +229,11 @@ SDL_Rect Graphics::MeasureText(const std::string& String, TTF_Font& Font)
     return empty;
 }
 
-SDL_Rect Graphics::MeasureText(GraphicsData graphics, const std::string& String)
+SDL_Rect Graphics::MeasureText(GraphicsData graphics, const std::string &String)
 {
     assert(graphics.NormalFont != nullptr);
     return Graphics::MeasureText(String, *graphics.NormalFont);
 }
-
 
 /*
 void Graphics::DrawTexture(Texture& texture, SDL_Rect* dest)
@@ -267,8 +248,7 @@ void Graphics::DrawTexture(Texture& texture, SDL_Rect* dest)
 }
 */
 
-
-void Graphics::DrawTexture(GraphicsData graphics, const TexturePointerData& texture, const SDL_Point& point)
+void Graphics::DrawTexture(GraphicsData graphics, const TexturePointerData &texture, const SDL_Point &point)
 {
 
     SDL_Rect rec = texture.GetSDLRect();
@@ -277,7 +257,6 @@ void Graphics::DrawTexture(GraphicsData graphics, const TexturePointerData& text
 
     rec.x = point.x;
     rec.y = point.y;
-    
 
     auto sdlt = texture.internal;
     assert(sdlt != nullptr);
@@ -285,4 +264,3 @@ void Graphics::DrawTexture(GraphicsData graphics, const TexturePointerData& text
     assert(graphics.SDLRenderer != nullptr);
     SDL_RenderCopy(graphics.SDLRenderer, sdlt, nullptr, &rec);
 }
-

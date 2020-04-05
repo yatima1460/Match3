@@ -10,12 +10,10 @@ class Settings
 
     static bool loaded;
 
-
     /**
      * Map holding the settings, in a key=value format for the ini-like file
      */
     static std::map<std::string, std::string> config;
-
 
     /**
      * Parses the ini-like string
@@ -24,16 +22,14 @@ class Settings
      */
     static bool parseFile(std::string contents);
 
-
 public:
-
     /**
      * Generates a string of the current settings
      * @return ini-like file representation
      */
     static std::string toString();
 
-    template<typename T>
+    template <typename T>
     static void set(std::string key, T value)
     {
         if (key.empty())
@@ -53,7 +49,7 @@ public:
         config[key] = s;
     }
 
-    template<typename T>
+    template <typename T>
     [[nodiscard]] static T get(std::string key)
     {
         if (!loaded)
@@ -80,8 +76,6 @@ public:
         }
 
         return t;
-
-
     }
 
     /**
@@ -95,6 +89,4 @@ public:
      * @return true if saved, false if error
      */
     [[nodiscard]] static bool save();
-
-
 };

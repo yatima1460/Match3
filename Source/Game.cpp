@@ -19,7 +19,7 @@ void MainLoop(GameData game);
 
 GameData Started()
 {
-    
+
     GameData game;
 
     if (!Settings::load())
@@ -34,7 +34,6 @@ GameData Started()
     // Load all the files inside the input directory
     AssetsManager::Init(game.graphics, Settings::get<std::string>("assets_path"));
 
-
     // game.registry = new entt::DefaultRegistry();
 
     // world = new World();
@@ -48,18 +47,12 @@ GameData Started()
 
     //std::vector<std::string> gems = {"ruby", "sapphire", "topaz", "diamond"};
 
+    std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    std::vector<Gem::GemData> gems = { {"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
+    srand(time(NULL));
 
+    game.world = World::Generate(10, gems);
 
-
-     srand(time(NULL));
-    
-
-    game.world = World::Generate(10,gems);
-
-  
-   
     MainLoop(game);
     game = Cleaned(game);
 
@@ -76,7 +69,6 @@ GameData Cleaned(GameData game)
     game.graphics = Graphics::Cleaned(game.graphics);
     std::cout << "Graphics cleaned" << std::endl;
 
-    
     std::cout << "Engine cleaned" << std::endl;
 
     return game;
@@ -94,44 +86,50 @@ void MainLoop(GameData game)
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
-        while (SDL_PollEvent(&game.e) != 0)
-        {
-            switch (game.e.type)
-            {
-            case SDL_QUIT:
-            {
-                // Pressing the SDLWindow [X] closes
-                game.quit = true;
-                break;
-            }
-            case SDL_KEYDOWN:
-            {
-                switch (game.e.key.keysym.sym)
-                {
-                // ESC closes
-                case SDLK_ESCAPE:
-                    game.quit = true;
-                    break;
 
-                default:
-                    break;
-                }
-                break;
-            }
-            default:
-            {
-                break;
-            }
-            }
-        }
+        Game::PollEvents(game);
 
         Graphics::ClearBuffers(game.graphics);
-     
+
         Graphics::DrawTexture(game.graphics, background);
 
         Game::DrawWorld(game.graphics, game.world);
 
         Graphics::SwapBuffers(game.graphics);
+    }
+}
+
+void PollEvents(GameData& game)
+{
+    while (SDL_PollEvent(&game.e) != 0)
+    {
+        switch (game.e.type)
+        {
+        case SDL_QUIT:
+        {
+            // Pressing the SDLWindow [X] closes
+            game.quit = true;
+            break;
+        }
+        case SDL_KEYDOWN:
+        {
+            switch (game.e.key.keysym.sym)
+            {
+            // ESC closes
+            case SDLK_ESCAPE:
+                game.quit = true;
+                break;
+
+            default:
+                break;
+            }
+            break;
+        }
+        default:
+        {
+            break;
+        }
+        }
     }
 }
 
@@ -152,7 +150,3 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
 }
 
 } // namespace Game
-
-
-
-//struct Game::GameData game;

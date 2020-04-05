@@ -13,12 +13,10 @@ class AssetsManager
 
 private:
     static std::map<std::string, TexturePointerData> Textures;
-
     static TexturePointerData DEFAULT_TEXTURE;
 
 public:
     static void Init(Graphics::GraphicsData context, const std::string &assetsDirectory);
-
 
     static TexturePointerData GetTextureData(const std::string &name)
     {
@@ -37,7 +35,7 @@ public:
         }
     }
 
-    [[nodiscard]] static SDL_Surface* LoadSDLSurfaceFromPNG(const std::string path);
+    [[nodiscard]] static SDL_Surface *LoadSDLSurfaceFromPNG(const std::string path);
 
     static void Clean();
 };

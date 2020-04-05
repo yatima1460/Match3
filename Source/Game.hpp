@@ -26,6 +26,8 @@ GameData Started();
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world);
 
+void PollEvents(GameData& game);
+
 } // namespace Game
 
 //extern struct Game::GameData game;

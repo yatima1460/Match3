@@ -9,11 +9,9 @@
 #include <stb_image.h>
 
 std::map<std::string, TexturePointerData> AssetsManager::Textures;
-
-
 TexturePointerData AssetsManager::DEFAULT_TEXTURE;
 
-std::string pathAppend(const std::string& p1, const std::string& p2)
+std::string pathAppend(const std::string &p1, const std::string &p2)
 {
 
     char sep = '/';
@@ -24,19 +22,21 @@ std::string pathAppend(const std::string& p1, const std::string& p2)
 #endif
 
     if (p1[p1.length()] != sep)
-    { // Need to add a
-        tmp += sep;                // path separator
+    {               // Need to add a
+        tmp += sep; // path separator
         return (tmp + p2);
-    } else
+    }
+    else
         return (p1 + p2);
 }
 
-bool hasEnding(std::string const& fullString, std::string const& ending)
+bool hasEnding(std::string const &fullString, std::string const &ending)
 {
     if (fullString.length() >= ending.length())
     {
         return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
-    } else
+    }
+    else
     {
         return false;
     }
@@ -67,13 +67,9 @@ bool hasEnding(std::string const& fullString, std::string const& ending)
         pitch = 4 * width;
         pixel_format = SDL_PIXELFORMAT_RGBA32;
     }
-    
-  
 
     SDL_Surface *surf = SDL_CreateRGBSurfaceWithFormatFrom((void *)data, width, height,
                                                            depth, pitch, pixel_format);
-    
-    
 
     if (surf == NULL)
     {
@@ -84,10 +80,10 @@ bool hasEnding(std::string const& fullString, std::string const& ending)
     return surf;
 }
 
-void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string& assetsDirectory)
+void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string &assetsDirectory)
 {
-    DIR* dirp = opendir(assetsDirectory.c_str());
-    struct dirent* dp;
+    DIR *dirp = opendir(assetsDirectory.c_str());
+    struct dirent *dp;
 
     while ((dp = readdir(dirp)) != nullptr)
     {
@@ -99,26 +95,25 @@ void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string& ass
 
         // if (hasEnding(nameStr, "bmp"))
         // {
-           
+
         //     Textures[rawname] = game->graphics->LoadTextureFromBMP(pathAppend(assetsDirectory, nameStr));
         //     std::cout << "Loaded BMP texture: " << nameStr << std::endl;
 
-        // } 
-         if (hasEnding(nameStr, "png"))
+        // }
+        if (hasEnding(nameStr, "png"))
         {
-            
+
             Textures[rawname] = LoadTextureFromPNG(graphics, pathAppend(assetsDirectory, nameStr));
             std::cout << "Loaded PNG texture: " << nameStr << std::endl;
         }
         else if (hasEnding(nameStr, "wav"))
         {
             // TODO
-        } else if (hasEnding(nameStr, "ttf"))
+        }
+        else if (hasEnding(nameStr, "ttf"))
         {
             // TODO
         }
-
-
     }
 
     DEFAULT_TEXTURE = LoadTextureFromPNG(graphics, pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
@@ -135,29 +130,14 @@ void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string& ass
 
 void AssetsManager::Clean()
 {
-  
-    // std::map<std::string, void*>::iterator it;
 
-    // for (it = Assets.begin(); it != Assets.end(); it++)
-    // {
-    //     auto t = reinterpret_cast<Texture*>(it->second);
-
-
-    //     assert(t != nullptr);
-
-    //     delete t;
-
-
-    // }
-
-    for (std::pair<std::string, TexturePointerData> element  : Textures)
+    for (std::pair<std::string, TexturePointerData> element : Textures)
     {
 
         SDL_DestroyTexture(element.second.internal);
         std::cout << "Cleaned texture:" << element.second.Path << std::endl;
-
     }
-        
+
     std::cout << "Cleaned assets manager" << std::endl;
 
     Textures.clear();

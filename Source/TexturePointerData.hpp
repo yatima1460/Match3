@@ -6,42 +6,25 @@
 #include "Settings.hpp"
 #include <assert.h>
 
-
 struct TexturePointerData
 {
 
-    SDL_Texture *internal;
-    std::string Path;
+    SDL_Texture *internal = nullptr;
+    std::string Path = "";
 
-    TexturePointerData()
-    {
-        internal = nullptr;
-        Path = "";
-    }
-
+private:
     // TexturePointerData(const TexturePointerData &source)
     // {
-    //     assert(source.internal != nullptr);
-    //     internal = source.internal;
-    //     Path = source.Path;
+
     // }
 
     // TexturePointerData &operator=(TexturePointerData &&source)
     // {
-    //     assert(source.internal != nullptr);
-    //     internal = source.internal;
-
-    //     assert(!source.Path.empty());
-    //     Path = std::move(source.Path);
 
     //     return *this;
     // }
 
-    explicit TexturePointerData(const std::string &Path);
-
-   
-
+public:
     [[nodiscard]] SDL_Rect GetSDLRect() const;
 
-    ~TexturePointerData();
 }; //Settings::get<std::string>("assets_path")+"/"+
