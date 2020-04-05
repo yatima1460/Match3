@@ -35,40 +35,48 @@ GameData Started()
     AssetsManager::Init(game.graphics, Settings::get<std::string>("assets_path"));
 
 
-    game.registry = new entt::DefaultRegistry();
+    // game.registry = new entt::DefaultRegistry();
 
     // world = new World();
     // Entity backgroundEntity = world->CreateEntity();
     // world->AttachComponent(backgroundEntity, AssetsManager::GetTextureData("background"));
     // world->AttachComponent(backgroundEntity, new Background());
 
-    auto background_entity = game.registry->create();
-    game.registry->assign<TexturePointerData>(background_entity, AssetsManager::GetTextureData("background"));
-    game.registry->assign<BackgroundData>(background_entity);
+    // auto background_entity = game.registry->create();
+    // game.registry->assign<TexturePointerData>(background_entity, );
+    // game.registry->assign<BackgroundData>(background_entity);
 
-    std::vector<std::string> gems = {"ruby", "sapphire", "topaz", "diamond"};
+    //std::vector<std::string> gems = {"ruby", "sapphire", "topaz", "diamond"};
 
-    srand(time(NULL));
-    for (size_t x = 0; x < 10; x++)
-    {
-        for (size_t y = 0; y < 10; y++)
-        {
-            auto gem = game.registry->create();
 
-            int randNum = rand() % (gems.size());
-            const TexturePointerData diamondTexture = AssetsManager::GetTextureData(gems[randNum]);
+    std::vector<Gem::GemData> gems = { {"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-            game.registry->assign<TexturePointerData>(gem, diamondTexture);
 
-            const unsigned int textureSize = 64;
-            SDL_Point p;
-            p.x = x * textureSize;
-            p.y = y * textureSize;
-            game.registry->assign<SDL_Point>(gem, p);
-        }
-    }
 
-    
+    // srand(time(NULL));
+    // for (size_t x = 0; x < 10; x++)
+    // {
+    //     for (size_t y = 0; y < 10; y++)
+    //     {
+            
+
+    //         int randNum = rand() % (gems.size());
+    //         const TexturePointerData diamondTexture = AssetsManager::GetTextureData(gems[randNum]);
+
+    //         game.registry->assign<TexturePointerData>(gem, diamondTexture);
+
+    //         const unsigned int textureSize = 64;
+    //         SDL_Point p;
+    //         p.x = x * textureSize;
+    //         p.y = y * textureSize;
+    //         game.registry->assign<SDL_Point>(gem, p);
+    //     }
+    //}
+
+    game.world = World::Generate(10,gems);
+
+  
+   
     MainLoop(game);
     game = Cleaned(game);
 
@@ -98,6 +106,8 @@ void MainLoop(GameData game)
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
+    const auto background = AssetsManager::GetTextureData("background");
+
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
@@ -132,37 +142,32 @@ void MainLoop(GameData game)
             }
         }
 
-    
-
         Graphics::ClearBuffers(game.graphics);
+     
+        Graphics::DrawTexture(game.graphics, background);
 
-        game.registry->view<BackgroundData, TexturePointerData>().each([game]([[unused]] const auto entity, const auto &BackgroundData, const auto &TextureData) {
-            DrawTexture(game.graphics, TextureData);
-        });
-
-        game.registry->view<SDL_Point, TexturePointerData>().each([game]([[unused]] const auto entity, const auto &PositionData, const auto &TextureData) {
-            DrawTexture(game.graphics, TextureData, PositionData);
-        });
-
-        // timer = Timer::FPS(timer);
-        // std::cout << timer.FPS << std::endl;
-        // auto entities = world->GetAllComponentsOfTypes<Texture, Background>();
-        // for (auto entity : entities)
-        // {
-        //     auto texture = std::get<0>(entity);
-        //     auto background = std::get<1>(entity);
-
-        // }
-
-        // const auto& background = AssetsManager::Get<Texture>("background");
-
-        // currentLevel->Update();
-
-        // currentLevel->Draw();
+        Game::DrawWorld(game.graphics, game.world);
 
         Graphics::SwapBuffers(game.graphics);
     }
 }
+
+void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
+{
+
+    for (size_t x = 0; x < world.side; x++)
+    {
+        for (size_t y = 0; y < world.side; y++)
+        {
+            size_t index = y * world.side + x;
+
+            const auto gem = world.data[index];
+            const auto texture = AssetsManager::GetTextureData(gem.texture_name);
+            Graphics::DrawTexture(graphics, texture, {x * 64, y * 64});
+        }
+    }
+}
+
 } // namespace Game
 
 

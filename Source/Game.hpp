@@ -2,8 +2,10 @@
 
 #include <SDL.h>
 
-#include <entt/entt.hpp>
+
 #include "Graphics.hpp"
+#include "Game/World.hpp"
+
 
 namespace Game
 {
@@ -11,7 +13,9 @@ namespace Game
 struct GameData
 {
     Graphics::GraphicsData graphics;
-    entt::DefaultRegistry* registry = nullptr;
+
+    
+    World::WorldData world;
     
     bool quit = false;
     SDL_Event e;
@@ -20,7 +24,7 @@ struct GameData
 GameData Cleaned(GameData);
 GameData Started();
 
-
+void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world);
 
 } // namespace Game
 
