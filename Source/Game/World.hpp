@@ -8,12 +8,13 @@ namespace World
 {
     struct WorldData
     {
-        size_t side;
-        std::vector<Gem::GemData> data;
+        int side;
+        Gem::GemData** data;
     };
 
+    // constexpr int GetIndex(const int x, const int y,const int side);
 
-    WorldData Generate(size_t side, std::vector<Gem::GemData> gemData);
+    WorldData Generate(int side, std::vector<Gem::GemData> gemData);
     
-    
+    WorldData RemoveMatches(WorldData world);
 }

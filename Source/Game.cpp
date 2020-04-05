@@ -49,7 +49,7 @@ GameData Started()
 
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    srand(time(NULL));
+    
 
     game.world = World::Generate(10, gems);
 
@@ -89,13 +89,16 @@ void MainLoop(GameData game)
 
         Game::PollEvents(game);
 
+
+        game.world = World::RemoveMatches(game.world);
+
         Graphics::ClearBuffers(game.graphics);
-
         Graphics::DrawTexture(game.graphics, background);
-
         Game::DrawWorld(game.graphics, game.world);
-
+        
         Graphics::SwapBuffers(game.graphics);
+        
+
     }
 }
 
@@ -135,16 +138,17 @@ void PollEvents(GameData& game)
 
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
 {
-
-    for (size_t x = 0; x < world.side; x++)
-    {
-        for (size_t y = 0; y < world.side; y++)
+for (int y = 0; y < world.side; y++)
         {
-            size_t index = y * world.side + x;
-
-            const auto gem = world.data[index];
-            const auto texture = AssetsManager::GetTextureData(gem.texture_name);
-            Graphics::DrawTexture(graphics, texture, {x * 64, y * 64});
+    for (int x = 0; x < world.side; x++)
+    {
+        
+            const auto gem = world.data[x][y];
+            if (!gem.texture_name.empty())
+            {
+                const auto texture = AssetsManager::GetTextureData(gem.texture_name);
+                Graphics::DrawTexture(graphics, texture, {x * 64, y * 64});
+            }
         }
     }
 }
