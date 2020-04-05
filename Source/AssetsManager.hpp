@@ -1,39 +1,48 @@
-
 #pragma once
 
+#include <string>
 #include <map>
-#include <assert.h>
-#include "TexturePointer.hpp"
+
+#include <memory>
 #include "Graphics.hpp"
 
-class AssetsManager
+#if __cplusplus >= 201703L && defined(__has_include)
+#if __has_include(<filesystem>)
+#define GHC_USE_STD_FS
+#include <filesystem>
+namespace fs = std::filesystem;
+#endif
+#endif
+#ifndef GHC_USE_STD_FS
+#include <ghc/filesystem.hpp>
+namespace fs = ghc::filesystem;
+#endif
+
+#include "TexturePointer.hpp"
+
+// #include <Game/Map.hpp>
+
+class AssetManager
 {
 
-private:
-    static std::map<std::string, TexturePointer::TexturePointerData> Textures;
-    static TexturePointer::TexturePointerData DEFAULT_TEXTURE;
-
 public:
-    static void Init(Graphics::GraphicsData context, const std::string &assetsDirectory);
+    // static std::map<std::string, std::unique_ptr<Font>> font_files;
+    static std::map<std::string, TexturePointer::TexturePointerData> texture_files;
+    static std::map<std::string, std::string> text_files;
 
-    static TexturePointer::TexturePointerData GetTextureData(const std::string &name)
+    static std::string assets_folder;
+
+    static bool LoadFile(const fs::directory_entry de, Graphics::GraphicsData graphics);
+    static bool Init(const std::string assets_folder, Graphics::GraphicsData graphic);
+
+    static const std::string &GetString(const std::string name);
+    inline static const TexturePointer::TexturePointerData &GetTextureData(const std::string name)
     {
-
-        auto iter = Textures.find(name);
-        if (iter != Textures.end())
-        {
-            auto e = iter->second;
-
-            return e;
-        }
-        else
-        {
-            assert(DEFAULT_TEXTURE.internal != nullptr);
-            return DEFAULT_TEXTURE;
-        }
+        assert(!texture_files.empty());
+        return texture_files[name];
     }
-
+    // static const Font& GetFont(const std::string name);
     [[nodiscard]] static SDL_Surface *LoadSDLSurfaceFromPNG(const std::string path);
 
-    static void Clean();
+    static void Unload();
 };

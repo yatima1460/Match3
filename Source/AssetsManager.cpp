@@ -1,48 +1,135 @@
 #include "AssetsManager.hpp"
 
-#include <iostream>
-#include <dirent.h>
-#include <cassert>
-#include "Game.hpp"
+#include <fstream>
+#include <assert.h>
+#include <sys/stat.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-std::map<std::string, TexturePointer::TexturePointerData> AssetsManager::Textures;
-TexturePointer::TexturePointerData AssetsManager::DEFAULT_TEXTURE;
+std::string AssetManager::assets_folder;
 
-std::string pathAppend(const std::string &p1, const std::string &p2)
-{
+// std::map<std::string, std::unique_ptr<Font>> AssetManager::font_files;
+std::map<std::string, TexturePointer::TexturePointerData> AssetManager::texture_files;
+std::map<std::string, std::string> AssetManager::text_files;
 
-    char sep = '/';
-    std::string tmp = p1;
-
-#ifdef _WIN32
-    sep = '\\';
+#if defined(WIN32) || defined(WIN64)
+// Copied from linux libc sys/stat.h:
+#define S_ISREG(m) (((m)&S_IFMT) == S_IFREG)
+#define S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
 #endif
 
-    if (p1[p1.length() - 1] != sep)
-    {               // Need to add a
-        tmp += sep; // path separator
-        return (tmp + p2);
-    }
-    else
-        return (p1 + p2);
+int is_regular_file(const char *path)
+{
+    assert(path != NULL);
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
 }
 
-bool hasEnding(std::string const &fullString, std::string const &ending)
+int isDir(const char *file_path)
 {
-    if (fullString.length() >= ending.length())
+    struct stat s;
+    stat(file_path, &s);
+    return S_ISDIR(s.st_mode);
+}
+
+void AssetManager::Unload()
+{
+
+    //font_files.clear();
+    texture_files.clear();
+    text_files.clear();
+
+    //logger->info("Asset manager cleaned");
+}
+
+bool AssetManager::LoadFile(const fs::directory_entry de, Graphics::GraphicsData graphics)
+{
+    //FIXME: error if key already exists
+
+    const fs::path &path = de.path();
+    const std::string ext = path.extension().string();
+    assert(!ext.empty());
+
+    //TODO: ugly
+    const std::string filename = path.filename().string().substr(0, path.filename().string().length() - ext.length());
+    const std::string path_str = path.string();
+    //const char *path_c_str = path_str.c_str();
+
+    if (ext == ".ttf")
     {
-        return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+        // font_files[filename] = std::make_unique<Font>(path_str, 18);
+        // assert(font_files[filename] != nullptr);
+        return true;
     }
-    else
+    else if (ext == ".png")
     {
+        //load as texture
+
+        texture_files[filename] = LoadTextureFromPNG(graphics, path_str);
+
+        return true;
+    }
+    else if (ext == ".glsl" || ext == ".lua" || ext == ".ini" || ext == ".txt" || ext == ".json" || ext == ".py")
+    {
+        //load as text file
+        std::ifstream ifs(path_str);
+        std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
+        text_files[filename] = content;
+        assert(!text_files[filename].empty());
+        return true;
+    }
+
+    //logger->critical("Can't load file '{0}' no loading method was implemented", path.string());
+    //game->Crash("Can't load file '"+path_str+"' no loading method was implemented");
+
+    return false;
+}
+
+bool AssetManager::Init(const std::string assets_folder, Graphics::GraphicsData graphics)
+{
+
+    //logger->info("Initializing asset manager");
+    assert(!assets_folder.empty());
+    AssetManager::assets_folder = assets_folder;
+
+    if (!isDir(assets_folder.c_str()))
+    {
+        // logger->critical("Can't find assets folder '{0}'", assets_folder);
+        // game->Crash("Can't find assets folder '"+Config::GAME_ASSETS_FOLDER+"'");
         return false;
     }
+
+    for (const auto &p : fs::recursive_directory_iterator(assets_folder))
+    {
+        if (!fs::is_directory(p))
+        {
+            const bool result = AssetManager::LoadFile(p, graphics);
+            if (result)
+            {
+                // logger->debug("File '{0}' loaded", p.path().string());
+            }
+            else
+            {
+                // logger->info("Can't load file: {0}", p.path().string());
+                // game->Crash("Can't load file:"+p.path().string());
+                return false;
+            }
+        }
+    }
+
+    // logger->info("Asset manager loaded.");
+    return true;
 }
 
-[[nodiscard]] SDL_Surface *AssetsManager::LoadSDLSurfaceFromPNG(const std::string path)
+const std::string &AssetManager::GetString(const std::string name)
+{
+    assert(!text_files.empty());
+    return text_files[name];
+}
+
+[[nodiscard]] SDL_Surface *AssetManager::LoadSDLSurfaceFromPNG(const std::string path)
 {
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;
@@ -78,67 +165,4 @@ bool hasEnding(std::string const &fullString, std::string const &ending)
     }
 
     return surf;
-}
-
-void AssetsManager::Init(Graphics::GraphicsData graphics, const std::string &assetsDirectory)
-{
-    DIR *dirp = opendir(assetsDirectory.c_str());
-    struct dirent *dp;
-
-    while ((dp = readdir(dirp)) != nullptr)
-    {
-
-        std::string nameStr(dp->d_name);
-
-        const size_t lastindex = nameStr.find_last_of('.');
-        const std::string rawname = nameStr.substr(0, lastindex);
-
-        if (hasEnding(nameStr, "bmp"))
-        {
-
-            Textures[rawname] = LoadTextureFromBMP(graphics, pathAppend(assetsDirectory, nameStr));
-            std::cout << "Loaded BMP texture: " << nameStr << std::endl;
-
-        }
-        if (hasEnding(nameStr, "png"))
-        {
-
-            Textures[rawname] = LoadTextureFromPNG(graphics, pathAppend(assetsDirectory, nameStr));
-            std::cout << "Loaded PNG texture: " << nameStr << std::endl;
-        }
-        else if (hasEnding(nameStr, "wav"))
-        {
-            // TODO
-        }
-        else if (hasEnding(nameStr, "ttf"))
-        {
-            // TODO
-        }
-    }
-
-    DEFAULT_TEXTURE = LoadTextureFromPNG(graphics, pathAppend(assetsDirectory, Settings::get<std::string>("error_texture")));
-
-    if (closedir(dirp) == 0)
-    {
-        std::cout << "Assets directory closed: " << assetsDirectory << std::endl;
-    }
-    else
-    {
-        std::cerr << "Couldn't close assets directory: " << assetsDirectory << std::endl;
-    }
-}
-
-void AssetsManager::Clean()
-{
-
-    for (std::pair<std::string, TexturePointer::TexturePointerData> element : Textures)
-    {
-
-        SDL_DestroyTexture(element.second.internal);
-        std::cout << "Cleaned texture:" << element.second.Path << std::endl;
-    }
-
-    std::cout << "Cleaned assets manager" << std::endl;
-
-    Textures.clear();
 }

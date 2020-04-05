@@ -39,7 +39,7 @@ GraphicsData Init()
         exit(EXIT_FAILURE);
     }
 
-    SDL_Surface *surface = AssetsManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("icon_name")).c_str());
+    SDL_Surface *surface = AssetManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("icon_name")).c_str());
     if (surface == nullptr)
         std::cerr << "Application icon is NULL" << std::endl;
     else
@@ -50,24 +50,24 @@ GraphicsData Init()
 
     TTF_Init();
     const auto fontPath =
-        Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("asset_font_name");
+        Settings::get<std::string>("assets_path") + "/Fonts/" + Settings::get<std::string>("asset_font_name");
     gd.SmallFont = TTF_OpenFont(fontPath.c_str(), 24);
     gd.NormalFont = TTF_OpenFont(fontPath.c_str(), 32);
     gd.BigFont = TTF_OpenFont(fontPath.c_str(), 48);
     if (gd.SmallFont == nullptr)
     {
         fprintf(stderr, "error: SmallFont not found\n");
-        exit(EXIT_FAILURE);
+        abort();
     }
     if (gd.NormalFont == nullptr)
     {
         fprintf(stderr, "error: NormalFont not found\n");
-        exit(EXIT_FAILURE);
+        abort();
     }
     if (gd.BigFont == nullptr)
     {
         fprintf(stderr, "error: BigFont not found\n");
-        exit(EXIT_FAILURE);
+        abort();
     }
 
     // Get SDLWindow surface
@@ -179,7 +179,7 @@ void ClearBuffers(GraphicsData graphics)
 
 TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path)
 {
-    SDL_Surface *surf = AssetsManager::LoadSDLSurfaceFromPNG(path);
+    SDL_Surface *surf = AssetManager::LoadSDLSurfaceFromPNG(path);
     assert(surf != nullptr);
 
     TexturePointer::TexturePointerData td;

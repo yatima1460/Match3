@@ -33,7 +33,7 @@ GameData Started()
     game.graphicsContext = Graphics::Init();
 
     // Load all the files inside the input directory
-    AssetsManager::Init(game.graphicsContext, Settings::get<std::string>("assets_path"));
+    AssetManager::Init(Settings::get<std::string>("assets_path"),game.graphicsContext);
 
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
@@ -47,7 +47,7 @@ GameData Started()
 
 GameData Cleaned(GameData game)
 {
-    AssetsManager::Clean();
+    AssetManager::Unload();
     // delete assetManager;
     // assetManager = nullptr;
     std::cout << "Asset Manager cleaned" << std::endl;
@@ -67,10 +67,10 @@ void MainLoop(GameData game)
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
-    const auto backgroundTexture = AssetsManager::GetTextureData("background");
+    const auto backgroundTexture = AssetManager::GetTextureData("background");
 
-    game.mouseSelection.OpenTexture = AssetsManager::GetTextureData("selection_open");
-    game.mouseSelection.LockedTexture = AssetsManager::GetTextureData("selection_locked");
+    game.mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
+    game.mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
 
     //game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
 
@@ -219,7 +219,7 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
             const auto gem = world.data[x][y];
             if (!gem.id.empty())
             {
-                const auto texture = AssetsManager::GetTextureData(gem.id);
+                const auto texture = AssetManager::GetTextureData(gem.id);
 
                 Vector2i pos = {x, y};
                 Graphics::DrawTexture(graphics, texture, pos * 64 + gem.drawingOffset);

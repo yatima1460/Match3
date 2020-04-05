@@ -51,6 +51,10 @@ if(WIN32)
 endif()
 
 
+add_subdirectory(Vendor/gulrak-filesystem)
+include_directories(Vendor/gulrak-filesystem/include)
+target_link_libraries(Match3 ghc_filesystem)
+
 # add_subdirectory(Vendor/entt_cpp14)
 # include_directories(Vendor/entt_cpp14/src)
 # target_link_libraries(Match3 ${ENTT_LIBRARY})
