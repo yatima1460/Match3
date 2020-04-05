@@ -15,7 +15,7 @@ Game demo with SDL2, C++11 with functional programming
 
 ### Prerequisites
 1. `git clone https://github.com/yatima1460/Match3.git`
-2. `sudo apt install buildessentials cmake libsdl2-dev libsdl2-ttf-dev`
+2. `sudo apt install build-essential cmake libsdl2-dev libsdl2-ttf-dev`
 
 ### Compile
 3. `mkdir build && cd build && cmake .. && make -j`
