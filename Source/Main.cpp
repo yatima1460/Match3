@@ -10,6 +10,6 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Game starting...");
-    [[unused]] const auto game = Game::Started();
+    Game::Start();
     return EXIT_SUCCESS;
 }

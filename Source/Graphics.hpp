@@ -21,7 +21,7 @@ GraphicsData Init();
 
 void ClearBuffers(GraphicsData graphics);
 
-[[nodiscard]] GraphicsData Cleaned(GraphicsData);
+[[nodiscard]] void Clean(GraphicsData graphics);
 
 // void CreateWindow();
 

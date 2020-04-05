@@ -16,12 +16,12 @@ struct BackgroundData
 {
 };
 
-void MainLoop(GameData game);
 
-GameData Started()
+
+void Start()
 {
 
-    GameData game;
+    
 
     if (!Settings::load())
     {
@@ -30,48 +30,51 @@ GameData Started()
     }
 
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
-    game.graphicsContext = Graphics::Init();
+    Graphics::GraphicsData graphics = Graphics::Init();
 
     // Load all the files inside the input directory
-    AssetManager::Init(Settings::get<std::string>("assets_path"),game.graphicsContext);
+    AssetManager::Init(Settings::get<std::string>("assets_path"), graphics);
 
-    std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    game.gemsGrid = World::Generate(Settings::get<int>("world_size"), gems);
+    MainLoop(graphics);
 
-    MainLoop(game);
-    game = Cleaned(game);
+    Game::Clean(graphics);
 
-    return game;
 }
 
-GameData Cleaned(GameData game)
+void Clean(Graphics::GraphicsData graphics)
 {
     AssetManager::Unload();
     // delete assetManager;
     // assetManager = nullptr;
     std::cout << "Asset Manager cleaned" << std::endl;
 
-    game.graphicsContext = Graphics::Cleaned(game.graphicsContext);
+    Graphics::Clean(graphics);
     std::cout << "Graphics cleaned" << std::endl;
 
     std::cout << "Engine cleaned" << std::endl;
 
-    return game;
 }
 
-void MainLoop(GameData game)
+void MainLoop(Graphics::GraphicsData graphics)
 {
     // Main loop
 
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
-    
+
     const auto backgroundTexture = AssetManager::GetTextureData("background");
 
-    game.mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
-    game.mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
+    SelectionData mouseSelection;
+    SDL_Event e;
+    
+    std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
+
+    auto world = World::Generate(Settings::get<int>("world_size"), gems);
+
+    mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
+    mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
 
 
     Vector2i mouseScreenPosition;
@@ -84,47 +87,47 @@ void MainLoop(GameData game)
     {
         timer = Timer::Ticked(timer);
 
-        while (SDL_PollEvent(&game.e) != 0)
+        while (SDL_PollEvent(&e) != 0)
         {
-            switch (game.e.type)
+            switch (e.type)
             {
             case SDL_MOUSEBUTTONDOWN:
             {
                 // Deselect with right click
-                if (game.e.button.button == SDL_BUTTON_RIGHT)
+                if (e.button.button == SDL_BUTTON_RIGHT)
                 {
-                    game.mouseSelection.SelectionLocked = false;
+                    mouseSelection.SelectionLocked = false;
                 }
-                if (game.e.button.button == SDL_BUTTON_LEFT)
+                if (e.button.button == SDL_BUTTON_LEFT)
                 {
                     // Allow clicking only when world is filled and static && mouse moved at least once
-                    if (World::IsFilledWithGems(game.gemsGrid) && game.mouseSelection.MouseMovedAtLeastOnce)
+                    if (World::IsFilledWithGems(world) && mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
-                        if (World::IsCoordinateInside(game.gemsGrid, currentMouseGridPosition))
+                        if (World::IsCoordinateInside(world, currentMouseGridPosition))
                         {
                             // If the player never selected a cell we allow it
-                            if (!game.mouseSelection.SelectionLocked)
+                            if (!mouseSelection.SelectionLocked)
                             {
                                 // Save the location where the player clicked
-                                game.mouseSelection.FirstSelectionLockedGridPosition = currentMouseGridPosition;
+                                mouseSelection.FirstSelectionLockedGridPosition = currentMouseGridPosition;
 
                                 // Set the selection as locked
-                                game.mouseSelection.SelectionLocked = true;
+                                mouseSelection.SelectionLocked = true;
                             }
                             else
                             {
                                 // If the player selected one and clicks again we check if the swap can be done
                                 //TODO: swap check here
 
-                                if (UI::IsNearbyTaxiDistance(currentMouseGridPosition, game.mouseSelection.FirstSelectionLockedGridPosition))
+                                if (UI::IsNearbyTaxiDistance(currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition))
                                 {
-                                    const auto swappedGemsWorld = World::Swap(game.gemsGrid, currentMouseGridPosition, game.mouseSelection.FirstSelectionLockedGridPosition);
+                                    const auto swappedGemsWorld = World::Swap(world, currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
                                     const auto matchesCalculated = World::RemoveGemsMatches(swappedGemsWorld);
                                     if (!World::IsFilledWithGems(matchesCalculated))
                                     {
                                         // The swapping produced holes, update the world
-                                        game.gemsGrid = matchesCalculated;
+                                        world = matchesCalculated;
                                     }
                                     else
                                     {
@@ -133,7 +136,7 @@ void MainLoop(GameData game)
                                 }
 
                                 // Clicked too far or swapping happened
-                                game.mouseSelection.SelectionLocked = false;
+                                mouseSelection.SelectionLocked = false;
                             }
                         }
                     }
@@ -143,10 +146,10 @@ void MainLoop(GameData game)
             case SDL_MOUSEMOTION:
             {
                 // Update mouse position when mouse is moved
-                mouseScreenPosition.x = game.e.motion.x;
-                mouseScreenPosition.y = game.e.motion.y;
+                mouseScreenPosition.x = e.motion.x;
+                mouseScreenPosition.y = e.motion.y;
 
-                game.mouseSelection.MouseMovedAtLeastOnce = true;
+                mouseSelection.MouseMovedAtLeastOnce = true;
                 break;
             }
             case SDL_QUIT:
@@ -157,7 +160,7 @@ void MainLoop(GameData game)
             }
             case SDL_KEYDOWN:
             {
-                switch (game.e.key.keysym.sym)
+                switch (e.key.keysym.sym)
                 {
                 // ESC closes
                 case SDLK_ESCAPE:
@@ -176,12 +179,12 @@ void MainLoop(GameData game)
             }
         }
 
-        game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
+        world = World::RemoveGemsMatches(world);
 
-        game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
-        game.gemsGrid = World::ApplyGravity(game.gemsGrid, Settings::get<int>("gravityPixelsPerFrame"), textureSize);
+        world = World::SpawnNewGems(world);
+        world = World::ApplyGravity(world, Settings::get<int>("gravityPixelsPerFrame"), textureSize);
 
-        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseScreenPosition, textureSize);
+        Game::DrawLevel(graphics, world, backgroundTexture, mouseSelection, mouseScreenPosition, textureSize);
     }
 }
 

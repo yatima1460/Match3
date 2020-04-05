@@ -99,7 +99,7 @@ GraphicsData Init()
     return gd;
 }
 
-GraphicsData Cleaned(GraphicsData graphics)
+void Clean(GraphicsData graphics)
 {
     assert(graphics.SmallFont != nullptr);
     TTF_CloseFont(graphics.SmallFont);
@@ -125,7 +125,6 @@ GraphicsData Cleaned(GraphicsData graphics)
     SDL_Quit();
     std::cout << "SDL cleaned" << std::endl;
 
-    return graphics;
 }
 
 

@@ -29,19 +29,10 @@ struct SelectionData
     bool MouseMovedAtLeastOnce = false;
 };
 
-struct GameData
-{
-    Graphics::GraphicsData graphicsContext;
 
-    SelectionData mouseSelection;
-
-    World::WorldData gemsGrid;
-
-    SDL_Event e;
-};
-
-GameData Cleaned(GameData);
-GameData Started();
+void MainLoop(Graphics::GraphicsData graphics);
+void Clean(Graphics::GraphicsData graphics);
+void Start();
 
 void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation, const int textureSize);
 void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world, const int textureSize);
