@@ -83,7 +83,7 @@ WorldData SpawnNewGems(WorldData world)
     return world;
 }
 
-bool IsFilled(const WorldData world)
+bool IsFilledWithGems(const WorldData world)
 {
     for (int y = 0; y < world.side; y++)
     {
@@ -98,7 +98,7 @@ bool IsFilled(const WorldData world)
     return true;
 }
 
-WorldData RemoveMatches(WorldData world)
+WorldData RemoveGemsMatches(WorldData world)
 {
     std::vector<std::vector<bool>> toRemove;
     toRemove.resize(world.side);

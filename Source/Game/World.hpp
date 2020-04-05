@@ -33,14 +33,14 @@ namespace World
         // }
     };
 
-    bool IsFilled(const WorldData world);
+    bool IsFilledWithGems(const WorldData world);
 
     WorldData SpawnNewGems(WorldData world);
     // constexpr int GetIndex(const int x, const int y,const int side);
 
     WorldData Generate(const int side, const std::vector<Gem::GemData> gemData);
     
-    WorldData RemoveMatches(WorldData world);
+    WorldData RemoveGemsMatches(WorldData world);
 
     WorldData ApplyGravity(WorldData world);
 }

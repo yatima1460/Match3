@@ -24,12 +24,12 @@ struct SelectionData
 
 struct GameData
 {
-    Graphics::GraphicsData graphics;
+    Graphics::GraphicsData graphicsContext;
 
 
-    SelectionData mouse_selection;
+    SelectionData mouseSelection;
 
-    World::WorldData world;
+    World::WorldData gemsGrid;
     
     bool quit = false;
     SDL_Event e;

@@ -29,10 +29,10 @@ GameData Started()
     }
 
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
-    game.graphics = Graphics::Init();
+    game.graphicsContext = Graphics::Init();
 
     // Load all the files inside the input directory
-    AssetsManager::Init(game.graphics, Settings::get<std::string>("assets_path"));
+    AssetsManager::Init(game.graphicsContext, Settings::get<std::string>("assets_path"));
 
     // game.registry = new entt::DefaultRegistry();
 
@@ -49,7 +49,7 @@ GameData Started()
 
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    game.world = World::Generate(10, gems);
+    game.gemsGrid = World::Generate(10, gems);
 
     MainLoop(game);
     game = Cleaned(game);
@@ -64,7 +64,7 @@ GameData Cleaned(GameData game)
     // assetManager = nullptr;
     std::cout << "Asset Manager cleaned" << std::endl;
 
-    game.graphics = Graphics::Cleaned(game.graphics);
+    game.graphicsContext = Graphics::Cleaned(game.graphicsContext);
     std::cout << "Graphics cleaned" << std::endl;
 
     std::cout << "Engine cleaned" << std::endl;
@@ -79,12 +79,12 @@ void MainLoop(GameData game)
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
-    const auto background = AssetsManager::GetTextureData("background");
+    const auto backgroundTexture = AssetsManager::GetTextureData("background");
 
-    game.mouse_selection.OpenTexture = AssetsManager::GetTextureData("selection_open");
-    game.mouse_selection.LockedTexture = AssetsManager::GetTextureData("selection_locked");
+    game.mouseSelection.OpenTexture = AssetsManager::GetTextureData("selection_open");
+    game.mouseSelection.LockedTexture = AssetsManager::GetTextureData("selection_locked");
 
-    game.world = World::RemoveMatches(game.world);
+    game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
     
 
 
@@ -102,13 +102,13 @@ void MainLoop(GameData game)
             {
                 if (game.e.button.button == SDL_BUTTON_LEFT)
                 {
-                    if (game.mouse_selection.MouseMovedAtLeastOnce)
+                    if (game.mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto gridLoc = Game::GetMouseGridLocation(64);
-                        if (IsGridPointInsideWorld(gridLoc, game.world))
+                        if (IsGridPointInsideWorld(gridLoc, game.gemsGrid))
                         {
-                            game.mouse_selection.FirstSelectionLockedGridPosition = gridLoc;
-                            game.mouse_selection.SelectionActive = true;
+                            game.mouseSelection.FirstSelectionLockedGridPosition = gridLoc;
+                            game.mouseSelection.SelectionActive = true;
                         }
                     }
                 }
@@ -116,9 +116,13 @@ void MainLoop(GameData game)
             }
             case SDL_MOUSEMOTION:
             {
-                game.mouse_selection.FirstSelectionPixelPosition.x = game.e.motion.x;
-                game.mouse_selection.FirstSelectionPixelPosition.y = game.e.motion.y;
-                game.mouse_selection.MouseMovedAtLeastOnce = true;
+                if (!game.mouseSelection.SelectionActive)
+                {
+                    game.mouseSelection.FirstSelectionPixelPosition.x = game.e.motion.x;
+                    game.mouseSelection.FirstSelectionPixelPosition.y = game.e.motion.y;
+                    game.mouseSelection.MouseMovedAtLeastOnce = true;
+                }
+
 
                 break;
             }
@@ -150,14 +154,14 @@ void MainLoop(GameData game)
         }
 
 
-        while (!World::IsFilled(game.world))
+        while (!World::IsFilledWithGems(game.gemsGrid))
         {
-            game.world = World::RemoveMatches(game.world);
-            game.world = World::ApplyGravity(game.world);
-            game.world = World::SpawnNewGems(game.world);
+            game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
+            game.gemsGrid = World::ApplyGravity(game.gemsGrid);
+            game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
         }
 
-        Game::DrawLevel(game.graphics, game.world, background, game.mouse_selection);
+        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection);
 
 
        
