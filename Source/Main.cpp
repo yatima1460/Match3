@@ -1,6 +1,7 @@
 
 
 #include "Game.hpp"
+#include <time.h>
 
 // we don't want to use SDL2main
 #undef main
