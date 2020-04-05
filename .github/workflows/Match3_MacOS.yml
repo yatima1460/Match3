@@ -1,0 +1,17 @@
+name: Match3_Windows
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - run: brew update
+    - run: brew install sdl2
+    - run: brew install sdl2_ttf
+    - run: mkdir build && cd build && cmake ..
+    - run: cd build && make -j
+      
