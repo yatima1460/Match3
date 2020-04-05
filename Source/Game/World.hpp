@@ -36,7 +36,7 @@ namespace World
 
     bool IsFilledWithGems(const WorldData world);
 
-
+    WorldData Swap(WorldData world, SDL_Point position1, SDL_Point position2);
 
     inline bool IsCoordinateInside(const World::WorldData& world, const SDL_Point& coord)
     {

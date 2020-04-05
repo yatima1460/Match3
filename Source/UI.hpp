@@ -27,4 +27,33 @@ inline void DrawTextureAtGridPosition(Graphics::GraphicsData graphics, TexturePo
 }
 
 
+inline bool IsNearbyTaxiDistance(const SDL_Point& A, const SDL_Point& B)
+{
+    if (A.x == B.x && A.y == B.y - 1)
+    {
+        return true;
+    }
+    if (A.x == B.x && A.y == B.y + 1)
+    {
+        return true;
+    }
+    if (A.x == B.x + 1 && A.y == B.y)
+    {
+        return true;
+    }
+    if (A.x == B.x - 1 && A.y == B.y)
+    {
+        return true;
+    }
+
+    return false;
+
+}
+
+
+}
+
+bool operator==(const SDL_Point& A, const SDL_Point& B)
+{
+    return A.x == B.x && A.y == B.y;
 }

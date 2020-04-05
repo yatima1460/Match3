@@ -26,7 +26,6 @@ WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
     {
         wd.data[i].resize(side);
     }
-    
 
     // wd.data = new Gem::GemData *[side];
     // for (int i = 0; i < side; ++i)
@@ -46,6 +45,16 @@ WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
     }
 
     return wd;
+}
+
+WorldData Swap(WorldData world, SDL_Point position1, SDL_Point position2)
+{
+    const auto gemPos1 = world.data[position1.x][position1.y];
+    const auto gemPos2 = world.data[position2.x][position2.y];
+    world.data[position1.x][position1.y] = gemPos2;
+    world.data[position2.x][position2.y] = gemPos1;
+
+    return world;
 }
 
 WorldData ApplyGravity(WorldData world)
@@ -162,8 +171,6 @@ WorldData RemoveGemsMatches(WorldData world)
             }
         }
     }
-
-
 
     return world;
 }

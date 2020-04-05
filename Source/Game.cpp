@@ -88,7 +88,7 @@ void MainLoop(GameData game)
 
     //SDL_GetMouseState(&game.selection_pos.x,&game.selection_pos.y);
 
-    SDL_Point mouseLocation;
+    SDL_Point mouseScreenPosition;
 
     while (!game.quit)
     {
@@ -100,18 +100,23 @@ void MainLoop(GameData game)
             {
             case SDL_MOUSEBUTTONDOWN:
             {
+                // Deselect with right click
+                if (game.e.button.button == SDL_BUTTON_RIGHT)
+                {
+                    game.mouseSelection.SelectionLocked = false;
+                }
                 if (game.e.button.button == SDL_BUTTON_LEFT)
                 {
                     if (game.mouseSelection.MouseMovedAtLeastOnce)
                     {
-                        const auto gridLoc = UI::ScreenPositionToGridPosition(mouseLocation, 64);
-                        if (World::IsCoordinateInside(game.gemsGrid, gridLoc))
+                        const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, 64);
+                        if (World::IsCoordinateInside(game.gemsGrid, currentMouseGridPosition))
                         {
                             // If the player never selected a cell we allow it
                             if (!game.mouseSelection.SelectionLocked)
                             {
                                 // Save the location where the player clicked
-                                game.mouseSelection.FirstSelectionLockedGridPosition = gridLoc;
+                                game.mouseSelection.FirstSelectionLockedGridPosition = currentMouseGridPosition;
 
                                 // Set the selection as locked
                                 game.mouseSelection.SelectionLocked = true;
@@ -121,10 +126,24 @@ void MainLoop(GameData game)
                                 // If the player selected one and clicks again we check if the swap can be done
                                 //TODO: swap check here
 
-                                
+                                if (UI::IsNearbyTaxiDistance(currentMouseGridPosition, game.mouseSelection.FirstSelectionLockedGridPosition))
+                                {
+                                    const auto swappedGemsWorld = World::Swap(game.gemsGrid, currentMouseGridPosition, game.mouseSelection.FirstSelectionLockedGridPosition);
+                                    const auto matchesCalculated = World::RemoveGemsMatches(swappedGemsWorld);
+                                    if (!World::IsFilledWithGems(matchesCalculated))
+                                    {
+                                        // The swapping produced holes, update the world
+                                        game.gemsGrid = matchesCalculated;
+                                    }
+                                    else
+                                    {
+                                        // Clicked nearby, but swapping failed
+                                    }
+                                }
 
+                                // Clicked too far or swapping happened
+                                game.mouseSelection.SelectionLocked = false;
                             }
-                            
                         }
                     }
                 }
@@ -133,8 +152,8 @@ void MainLoop(GameData game)
             case SDL_MOUSEMOTION:
             {
                 // Update mouse position when mouse is moved
-                mouseLocation.x = game.e.motion.x;
-                mouseLocation.y = game.e.motion.y;
+                mouseScreenPosition.x = game.e.motion.x;
+                mouseScreenPosition.y = game.e.motion.y;
 
                 game.mouseSelection.MouseMovedAtLeastOnce = true;
                 break;
@@ -173,7 +192,7 @@ void MainLoop(GameData game)
             game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
         }
 
-        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseLocation);
+        Game::DrawLevel(game.graphicsContext, game.gemsGrid, backgroundTexture, game.mouseSelection, mouseScreenPosition);
     }
 }
 
@@ -217,9 +236,8 @@ void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world)
             if (!gem.texture_name.empty())
             {
                 const auto texture = AssetsManager::GetTextureData(gem.texture_name);
-                
 
-                UI::DrawTextureAtGridPosition(graphics, texture, {x,y}, 64);
+                UI::DrawTextureAtGridPosition(graphics, texture, {x, y}, 64);
             }
         }
     }
