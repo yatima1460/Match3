@@ -12,7 +12,7 @@ namespace World
 
 WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
 {
-    //srand(time(NULL));
+    
     assert(side >= 3);
     assert(gemData.size() != 0);
     WorldData wd;
@@ -35,12 +35,12 @@ WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
     {
         for (int x = 0; x < side; x++)
         {
+wd.data[x][y].texture_name = "";
+            // int randNum = rand() % (gemData.size());
+            // assert(randNum >= 0);
+            // assert(randNum < (int)gemData.size());
 
-            int randNum = rand() % (gemData.size());
-            assert(randNum >= 0);
-            assert(randNum < (int)gemData.size());
-
-            wd.data[x][y] = gemData[randNum];
+            // wd.data[x][y] = gemData[randNum];
         }
     }
 
@@ -81,7 +81,7 @@ WorldData ApplyGravity(WorldData world)
             if (world.data[x][y + 1].texture_name == "")
             {
                 world.data[x][y].IsFalling = true;
-                const int GRAVITY_SPEED = 4;
+                const int GRAVITY_SPEED = 8;
                 world.data[x][y].drawingOffset.y += GRAVITY_SPEED;
                 if (world.data[x][y].drawingOffset.y >= 64)
                 {

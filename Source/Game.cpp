@@ -90,6 +90,8 @@ void MainLoop(GameData game)
 
     SDL_Point mouseScreenPosition;
 
+    // Set random seed for gems spawning
+    srand(time(NULL));
     while (!game.quit)
     {
         timer = Timer::Ticked(timer);
