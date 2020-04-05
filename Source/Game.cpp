@@ -53,25 +53,8 @@ GameData Started()
 
 
 
-    // srand(time(NULL));
-    // for (size_t x = 0; x < 10; x++)
-    // {
-    //     for (size_t y = 0; y < 10; y++)
-    //     {
-            
-
-    //         int randNum = rand() % (gems.size());
-    //         const TexturePointerData diamondTexture = AssetsManager::GetTextureData(gems[randNum]);
-
-    //         game.registry->assign<TexturePointerData>(gem, diamondTexture);
-
-    //         const unsigned int textureSize = 64;
-    //         SDL_Point p;
-    //         p.x = x * textureSize;
-    //         p.y = y * textureSize;
-    //         game.registry->assign<SDL_Point>(gem, p);
-    //     }
-    //}
+     srand(time(NULL));
+    
 
     game.world = World::Generate(10,gems);
 
