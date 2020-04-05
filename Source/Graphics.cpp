@@ -34,7 +34,7 @@ GraphicsData Init()
     gd.SDLWindow = SDL_CreateWindow(
         Settings::get<std::string>("window_name").c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        1280, 720,
+        64*10, 64*10,
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_RENDERER_ACCELERATED);
     if (gd.SDLWindow == nullptr)
     {
