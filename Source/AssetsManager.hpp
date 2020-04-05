@@ -19,11 +19,6 @@ private:
 public:
     static void Init(Graphics::GraphicsData context, const std::string &assetsDirectory);
 
-    // template<class T>
-    // [[nodiscard]] inline static T& Get(const std::string& name)
-    // {
-    //     return *reinterpret_cast<T*>(AssetsManager::T[name]);
-    // }
 
     static TexturePointerData GetTextureData(const std::string &name)
     {
