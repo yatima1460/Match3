@@ -55,4 +55,7 @@ namespace World
     WorldData RemoveGemsMatches(WorldData world);
 
     WorldData ApplyGravity(WorldData world);
+
+    // Returns true if the world position can't be affected by gravity
+    bool IsPositionStable(WorldData world, SDL_Point position);
 }

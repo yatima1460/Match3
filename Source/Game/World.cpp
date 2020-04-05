@@ -10,6 +10,19 @@ namespace World
 //     return y*side + x;
 // }
 
+bool IsPositionStable(WorldData world, SDL_Point position)
+{
+   
+    for (int y = position.y + 1; y < world.side; y++)
+    {
+        if (world.data[position.x][y].texture_name == "")
+            return false;
+    }
+
+    return true;
+    
+}
+
 WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
 {
     
@@ -170,6 +183,9 @@ WorldData RemoveGemsMatches(WorldData world)
             const auto next = world.data[x + 1][y];
             const auto nextnext = world.data[x + 2][y];
 
+            if (!World::IsPositionStable(world, {x,y}))
+                continue;
+
             if (current.texture_name == next.texture_name && next.texture_name == nextnext.texture_name)
             {
                 toRemove[x][y] = true;
@@ -188,6 +204,9 @@ WorldData RemoveGemsMatches(WorldData world)
             const auto current = world.data[x][y];
             const auto next = world.data[x][y + 1];
             const auto nextnext = world.data[x][y + 2];
+
+            if (!World::IsPositionStable(world, {x,y}))
+                continue;
 
             if (current.texture_name == next.texture_name && next.texture_name == nextnext.texture_name)
             {

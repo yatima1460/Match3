@@ -189,8 +189,8 @@ void MainLoop(GameData game)
         }
 
 
-        if (World::AllGemsFell(game.gemsGrid))
-            game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
+       
+        game.gemsGrid = World::RemoveGemsMatches(game.gemsGrid);
             
         game.gemsGrid = World::SpawnNewGems(game.gemsGrid);
         game.gemsGrid = World::ApplyGravity(game.gemsGrid);
