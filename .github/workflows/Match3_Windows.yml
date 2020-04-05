@@ -10,6 +10,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - run: mkdir build && cd build && cmake ..
-    - run: dir D:/a/Match3/Match3/build
-    - run: msbuild build/Match3.sln
+
+    - name: Setup MSBuild.exe
+          uses: warrenbuckley/Setup-MSBuild@v1
+
+    - name: MSBuild
+      working-directory: build
+      run: msbuild Match3.sln
       
