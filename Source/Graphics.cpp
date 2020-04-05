@@ -125,6 +125,8 @@ GraphicsData Cleaned(GraphicsData graphics)
     //Quit SDL subsystems
     SDL_Quit();
     std::cout << "SDL cleaned" << std::endl;
+
+    return graphics;
 }
 
 void DrawTexture(GraphicsData graphics, const TexturePointerData &Texture)
