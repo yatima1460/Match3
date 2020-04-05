@@ -10,7 +10,7 @@ namespace World
     struct WorldData
     {
         int side = 0;
-        Gem::GemData** data = nullptr;
+        std::vector<std::vector<Gem::GemData>> data;
         std::vector<Gem::GemData> gemData;
 
         // WorldData& operator=(WorldData source)
@@ -33,11 +33,12 @@ namespace World
         // }
     };
 
+    bool IsFilled(const WorldData world);
 
     WorldData SpawnNewGems(WorldData world);
     // constexpr int GetIndex(const int x, const int y,const int side);
 
-    WorldData Generate(int side, std::vector<Gem::GemData> gemData);
+    WorldData Generate(const int side, const std::vector<Gem::GemData> gemData);
     
     WorldData RemoveMatches(WorldData world);
 

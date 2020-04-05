@@ -10,7 +10,7 @@ namespace World
 //     return y*side + x;
 // }
 
-WorldData Generate(int side, std::vector<Gem::GemData> gemData)
+WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
 {
     //srand(time(NULL));
     assert(side >= 3);
@@ -21,9 +21,16 @@ WorldData Generate(int side, std::vector<Gem::GemData> gemData)
 
     wd.side = side;
 
-    wd.data = new Gem::GemData *[side];
-    for (int i = 0; i < side; ++i)
-        wd.data[i] = new Gem::GemData[side];
+    wd.data.resize(side);
+    for (size_t i = 0; i < side; i++)
+    {
+        wd.data[i].resize(side);
+    }
+    
+
+    // wd.data = new Gem::GemData *[side];
+    // for (int i = 0; i < side; ++i)
+    //     wd.data[i] = new Gem::GemData[side];
 
     for (int y = 0; y < side; y++)
     {
@@ -76,12 +83,27 @@ WorldData SpawnNewGems(WorldData world)
     return world;
 }
 
+bool IsFilled(const WorldData world)
+{
+    for (int y = 0; y < world.side; y++)
+    {
+        for (int x = 0; x < world.side; x++)
+        {
+            if (world.data[x][y].texture_name == "")
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 WorldData RemoveMatches(WorldData world)
 {
-
-    bool **toRemove = new bool *[world.side];
-    for (int i = 0; i < world.side; ++i)
-        toRemove[i] = new bool[world.side];
+    std::vector<std::vector<bool>> toRemove;
+    toRemove.resize(world.side);
+    for (size_t i = 0; i < world.side; i++)
+        toRemove[i].resize(world.side);
 
     for (int y = 0; y < world.side; y++)
     {
@@ -141,7 +163,7 @@ WorldData RemoveMatches(WorldData world)
         }
     }
 
-    delete[] toRemove;
+
 
     return world;
 }
