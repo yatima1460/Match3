@@ -43,6 +43,8 @@ Not supported yet
 # TODO
 
 - Falling animation tied to delta time
+- Smooth swapping animation
+- Smooth destroyed animation
 - Remove ugly static structs like AssetManager and Settings
 - ~Add pure compiler-specific keywords around~
 - Some type of logging
