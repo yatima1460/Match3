@@ -47,6 +47,7 @@ Not supported yet
 - Add pure compiler-specific keywords around
 - Some type of logging
 - Sound
+- Clang build too
 - MessageBoxes for code errors
 - Load game data from json files and replace Settings.ini too?
 - Android build?
