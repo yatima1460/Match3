@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.2)
 
 project(DP_Example)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+endif()
 
 include(CTest)
 set(CMAKE_CXX_STANDARD 11)
