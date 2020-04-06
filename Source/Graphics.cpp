@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <cassert>
-#include "Settings.hpp"
+
 #include "Graphics.hpp"
 #include <iostream>
 #include "Game.hpp"
@@ -13,7 +13,7 @@
 namespace Graphics
 {
 
-GraphicsData Init()
+GraphicsData Init(const json& settings)
 {
     GraphicsData gd;
 
@@ -24,11 +24,12 @@ GraphicsData Init()
         abort();
     }
 
-    const int textureSize = Settings::get<int>("texture_size");
-    const int worldSize = Settings::get<int>("world_size");
+    const int textureSize = settings["texture_size"];
+    const int worldSize = settings["world_size"];
 
+    const std::string window_name =  settings["window_name"];
     gd.SDLWindow = SDL_CreateWindow(
-        Settings::get<std::string>("window_name").c_str(),
+       window_name.c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         textureSize * worldSize, textureSize * worldSize,
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_RENDERER_ACCELERATED);
@@ -39,7 +40,11 @@ GraphicsData Init()
         abort();
     }
 
-    SDL_Surface *surface = AssetManager::LoadSDLSurfaceFromPNG((Settings::get<std::string>("assets_path") + "/" + Settings::get<std::string>("icon_name")).c_str());
+
+    std::string icon_path = settings["assets_path"];
+    icon_path += "/";
+    icon_path +=  settings["icon_name"];
+    SDL_Surface *surface = AssetManager::LoadSDLSurfaceFromPNG((icon_path));
     if (surface == nullptr)
         std::cerr << "Application icon is NULL" << std::endl;
     else
@@ -54,8 +59,9 @@ GraphicsData Init()
     std::cout << "Renderer: " << rendererInfo.name << std::endl;
 
     TTF_Init();
-    const auto fontPath =
-        Settings::get<std::string>("assets_path") + "/Fonts/" + Settings::get<std::string>("asset_font_name");
+    std::string fontPath = settings["assets_path"];
+    fontPath += "/Fonts/";
+    fontPath +=  settings["asset_font_name"];
     gd.SmallFont = TTF_OpenFont(fontPath.c_str(), 24);
     gd.NormalFont = TTF_OpenFont(fontPath.c_str(), 32);
     gd.BigFont = TTF_OpenFont(fontPath.c_str(), 48);

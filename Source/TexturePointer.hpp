@@ -3,7 +3,7 @@
 
 #include <string>
 #include <SDL.h>
-#include "Settings.hpp"
+
 #include <assert.h>
 #include "Game/Vector2i.hpp"
 

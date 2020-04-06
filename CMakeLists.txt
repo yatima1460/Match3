@@ -27,6 +27,9 @@ target_link_libraries(Match3 ghc_filesystem)
 # https://github.com/nothings/stb
 include_directories(Vendor/stb)
 
+# https://github.com/nlohmann/json
+include_directories(Vendor/nlohmann)
+
 
 if(WIN32)
     # Windows
@@ -96,7 +99,7 @@ endif()
 # Copy Assets folder to build directory
 file(COPY Assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-file(COPY Settings.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY Settings.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 enable_testing()
 add_subdirectory(Tests)

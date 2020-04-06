@@ -2,6 +2,8 @@
 
 #include "TexturePointer.hpp"
 #include <SDL_ttf.h>
+#include <json.hpp>
+using json = nlohmann::json;
 
 namespace Graphics
 {
@@ -17,7 +19,7 @@ struct GraphicsData
      SDL_GLContext GLContext = nullptr;
 };
 
-GraphicsData Init();
+GraphicsData Init(const json& settings);
 
 void ClearBuffers(GraphicsData graphics);
 

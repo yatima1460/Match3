@@ -1,11 +1,15 @@
 #include "Game.hpp"
 
-#include "Settings.hpp"
+
 #include "AssetsManager.hpp"
 #include <assert.h>
 #include "Timer.hpp"
 #include <iostream>
 #include "UI.hpp"
+#include <sstream>
+
+
+
 
 namespace Game
 {
@@ -17,19 +21,32 @@ struct BackgroundData
 void Start()
 {
 
-    if (!Settings::load())
+    json settings;
+
+    std::ifstream file("Settings.json");
+
+    if (file)
     {
-        std::cout << "Can't load settings from .ini file" << std::endl;
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        file.close();
+        settings = settings.parse(buffer.str());
+    }
+    else
+    {
+        std::cout << "ERROR: can't load settings file" << std::endl
+                  << std::endl;
         abort();
     }
 
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
-    Graphics::GraphicsData graphics = Graphics::Init();
+    Graphics::GraphicsData graphics = Graphics::Init(settings);
 
     // Load all the files inside the input directory
-    AssetManager::Init(Settings::get<std::string>("assets_path"), graphics);
+    AssetManager::Init(settings["assets_path"], graphics);
 
-    MainLoop(graphics);
+    MainLoop(settings, graphics);
 
     Game::Clean(graphics);
 }
@@ -47,7 +64,7 @@ void Clean(Graphics::GraphicsData graphics)
     std::cout << "Engine cleaned" << std::endl;
 }
 
-void MainLoop(const Graphics::GraphicsData &graphics)
+void MainLoop(const json& settings, const Graphics::GraphicsData &graphics)
 {
     // Main loop
 
@@ -63,15 +80,15 @@ void MainLoop(const Graphics::GraphicsData &graphics)
     // TODO: load gems data from JSON?
     std::vector<Gem::GemData> gems = {Gem::GemData("ruby"), Gem::GemData("sapphire"), Gem::GemData("topaz"), Gem::GemData("diamond"), Gem::GemData("amethyst")};
 
-    auto world = World::GenerateEmpty(Settings::get<int>("world_size"), gems);
+    auto world = World::GenerateEmpty(settings["world_size"], gems);
 
     mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
     mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
 
     Vector2i mouseScreenPosition = {0, 0};
 
-    const auto textureSize = Settings::get<int>("texture_size");
-    const auto gravityPixelsPerFrame = Settings::get<int>("gravityPixelsPerFrame");
+    const auto textureSize = settings["texture_size"];
+    const auto gravityPixelsPerFrame = settings["gravityPixelsPerFrame"];
 
 #ifdef WIN32
     const auto millisecondsForFrame = 1000.0f / Settings::get<float>("FPS");

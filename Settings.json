@@ -1,0 +1,19 @@
+{
+    "window_name": "Match3 Game Demo with C++11, SDL2 and functional programming",
+    "assets_path": "Assets",
+    "asset_font_name": "Roboto-Regular.ttf",
+    "icon_name": "icon.png",
+    "error_texture": "NoTexture.png",
+    "gravityPixelsPerFrame": 4,
+    "texture_size": 64,
+    "world_size": 10,
+    "FPS": 60,
+
+    "gems": [
+        "amethyst",
+        "diamond",
+        "ruby",
+        "sapphire",
+        "topaz"
+    ]
+}

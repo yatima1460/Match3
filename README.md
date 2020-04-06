@@ -52,7 +52,7 @@ Not supported yet
 - ~Google Test~
 - Clang build too
 - MessageBoxes for code errors
-- Load game data from json files and replace Settings.ini too?
+- ~Load game data from json files and replace Settings.ini too?~
 - Android build?
 - Add other backends like OpenGL, DirectX, Vulkan?
 - Score?

@@ -6,11 +6,13 @@
 #include "Game/World.hpp"
 #include "Game/Vector2i.hpp"
 #include "UI.hpp"
+#include <json.hpp>
+using json = nlohmann::json;
 
 namespace Game
 {
 
-void MainLoop(const Graphics::GraphicsData& graphics);
+void MainLoop(const json& settings, const Graphics::GraphicsData& graphics);
 void Clean(Graphics::GraphicsData graphics);
 void Start();
 
