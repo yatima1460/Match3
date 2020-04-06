@@ -61,7 +61,7 @@ void MainLoop(Graphics::GraphicsData graphics)
     SDL_Event e;
 
     // TODO: load gems data from JSON?
-    std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
+    std::vector<Gem::GemData> gems = {Gem::GemData("ruby"), Gem::GemData("sapphire"), Gem::GemData("topaz"), Gem::GemData("diamond")};
 
     auto world = World::GenerateEmpty(Settings::get<int>("world_size"), gems);
 

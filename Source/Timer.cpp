@@ -13,11 +13,9 @@ float clamp(float n, float lower, float upper)
 namespace Timer
 {
 
-TimerData::TimerData()
+TimerData::TimerData() : NOW(SDL_GetPerformanceCounter()), LAST(SDL_GetPerformanceCounter()), FPS(0)
 {
-    NOW = SDL_GetPerformanceCounter();
-    LAST = SDL_GetPerformanceCounter();
-    FPS = 0;
+    
 }
 
 float DeltaTime(const TimerData data)

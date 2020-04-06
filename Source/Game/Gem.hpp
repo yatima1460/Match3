@@ -17,9 +17,9 @@ struct GemData
 	{
 	}
 
-	GemData(const std::string& id) : id(id)
+	explicit GemData(const std::string& id) : id(id), drawingOffset({0, 0})
 	{
-		drawingOffset = {0, 0};
+
 	}
 
 
@@ -28,7 +28,7 @@ struct GemData
 	
 };
 
-inline bool operator==(const Gem::GemData A, const Gem::GemData B)
+inline bool operator==(const Gem::GemData& A, const Gem::GemData& B)
 {
 	return A.id == B.id;
 }
