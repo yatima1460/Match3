@@ -1,4 +1,4 @@
-name: Match3_Linux
+name: Match3_Linux_Zip
 
 on: [push]
 
