@@ -77,7 +77,7 @@ void MainLoop(Graphics::GraphicsData graphics)
     mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
 
 
-    Vector2i mouseScreenPosition;
+	Vector2i mouseScreenPosition = { 0, 0};
 
     
     const auto textureSize = Settings::get<int>("texture_size");
