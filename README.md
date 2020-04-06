@@ -32,11 +32,13 @@ Game demo with SDL2, C++11 with functional programming
 - All binaries necessary are in Vendor and the CMake file will load them instead of searching system-wide libraries
 
 ### MinGW 
-TODO
+Not supported yet
 
 ## MacOS
-TODO
 
+1. `brew install sdl2 sdl2_ttf`
+2. `mkdir build && cd build && cmake ..`
+3. `make -C build -j`
 
 # Credits
 
