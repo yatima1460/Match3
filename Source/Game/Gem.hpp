@@ -29,7 +29,7 @@ struct GemData
 	
 };
 
-CONST inline bool operator==(const Gem::GemData& A, const Gem::GemData& B)
+CONST_FUNCTION inline bool operator==(const Gem::GemData& A, const Gem::GemData& B)
 {
 	return A.id == B.id;
 }

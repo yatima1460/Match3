@@ -19,18 +19,18 @@ TimerData::TimerData() : NOW(SDL_GetPerformanceCounter()), LAST(SDL_GetPerforman
     
 }
 
-CONST float DeltaTime(const TimerData data)
+CONST_FUNCTION float DeltaTime(const TimerData data)
 {
     return ((data.NOW - data.LAST) * 1000.0f / SDL_GetPerformanceFrequency());
 }
 
-CONST TimerData FPS(TimerData data)
+CONST_FUNCTION TimerData FPS(TimerData data)
 {
     data.FPS = clamp((float)((1000.0 / DeltaTime(data)) * FPS_LINEAR_INTERPOLATION + data.FPS * (1.0f - FPS_LINEAR_INTERPOLATION)), 1, 1000);
     return data;
 }
 
-CONST TimerData Ticked(TimerData data)
+CONST_FUNCTION TimerData Ticked(TimerData data)
 {
     data.LAST = data.NOW;
     data.NOW = SDL_GetPerformanceCounter();

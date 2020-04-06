@@ -72,7 +72,7 @@ void MainLoop(const Graphics::GraphicsData &graphics)
 
     const auto textureSize = Settings::get<int>("texture_size");
     const auto gravityPixelsPerFrame = Settings::get<int>("gravityPixelsPerFrame");
-    const auto millisecondsForFrame = 1000.0f / Settings::get<float>("FPS");
+    //const auto millisecondsForFrame = 1000.0f / Settings::get<float>("FPS");
 
     bool quit = false;
     while (!quit)

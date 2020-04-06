@@ -25,12 +25,12 @@ struct SelectionData
     bool MouseMovedAtLeastOnce = false;
 };
 
-CONST inline Vector2i ScreenPositionToGridPosition(const Vector2i screenLocation, const int textureSize)
+CONST_FUNCTION inline Vector2i ScreenPositionToGridPosition(const Vector2i screenLocation, const int textureSize)
 {
     return {(screenLocation.x / textureSize), (screenLocation.y / textureSize)};
 }
 
-CONST inline Vector2i GridPositionToScreenPosition(const Vector2i gridLocation, const int textureSize)
+CONST_FUNCTION inline Vector2i GridPositionToScreenPosition(const Vector2i gridLocation, const int textureSize)
 {
     return {gridLocation.x * textureSize, gridLocation.y * textureSize};
 }
@@ -41,7 +41,7 @@ inline void DrawTextureAtGridPosition(const Graphics::GraphicsData& graphics, co
     Graphics::DrawTexture(graphics, texture, positionToDrawSelection);
 }
 
-CONST inline bool IsNearbyTaxiDistance(const Vector2i &A, const Vector2i &B)
+CONST_FUNCTION inline bool IsNearbyTaxiDistance(const Vector2i &A, const Vector2i &B)
 {
     //TODO: maybe less ugly code?
     return ((A.x == B.x && A.y == B.y - 1) || (A.x == B.x && A.y == B.y + 1) || (A.x == B.x + 1 && A.y == B.y) || (A.x == B.x - 1 && A.y == B.y));
