@@ -42,6 +42,7 @@ Not supported yet
 
 # TODO
 
+- Remove ugly static structs like AssetManager and Settings
 - Add pure compiler-specific keywords around
 - Sound
 - MessageBoxes for code errors
