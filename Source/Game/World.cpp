@@ -1,11 +1,11 @@
 #include "World.hpp"
-
+#include "Functional.hpp"
 #include <cassert>
 
 namespace World
 {
 
-bool IsPositionStable(const WorldData& world,const Vector2i position)
+CONST bool IsPositionStable(const WorldData& world,const Vector2i position)
 {
 
     for (int y = position.y + 1; y < world.side; y++)
@@ -18,7 +18,7 @@ bool IsPositionStable(const WorldData& world,const Vector2i position)
 }
 
 
-WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemData)
+CONST WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemData)
 {
 
     assert(side >= 3);
@@ -46,7 +46,7 @@ WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemDat
     return wd;
 }
 
-WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData>& gemData)
+CONST WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData>& gemData)
 {
     assert(side >= 3);
     assert(gemData.size() != 0);
@@ -62,7 +62,7 @@ WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData>& gemData
     return wd;
 }
 
-WorldData Swap(WorldData world, Vector2i position1, Vector2i position2)
+CONST WorldData Swap(WorldData world, Vector2i position1, Vector2i position2)
 {
     const auto gemPos1 = world.data[position1.x][position1.y];
     const auto gemPos2 = world.data[position2.x][position2.y];
@@ -72,7 +72,7 @@ WorldData Swap(WorldData world, Vector2i position1, Vector2i position2)
     return world;
 }
 
-WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int textureSize)
+CONST WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int textureSize)
 {
 
     for (int y = 0; y < world.side - 1; y++)
@@ -97,7 +97,7 @@ WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int text
     return world;
 }
 
-WorldData SpawnNewGems(WorldData world)
+CONST WorldData SpawnNewGems(WorldData world)
 {
     for (int x = 0; x < world.side; x++)
     {
@@ -114,12 +114,12 @@ WorldData SpawnNewGems(WorldData world)
     return world;
 }
 
-bool HasHoles(const WorldData& world)
+CONST bool HasHoles(const WorldData& world)
 {
     return !IsFilledWithGems(world);
 }
 
-bool IsFilledWithGems(const WorldData& world)
+CONST bool IsFilledWithGems(const WorldData& world)
 {
     for (int y = 0; y < world.side; y++)
     {
@@ -134,7 +134,7 @@ bool IsFilledWithGems(const WorldData& world)
     return true;
 }
 
-WorldData RemoveGemsMatches(WorldData world)
+CONST WorldData RemoveGemsMatches(WorldData world) 
 {
     std::vector<std::vector<bool>> toRemove;
     toRemove.resize(world.side);

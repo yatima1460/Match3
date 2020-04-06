@@ -3,6 +3,7 @@
 #include <string>
 #include <SDL.h>
 #include "Vector2i.hpp"
+#include "Functional.hpp"
 
 namespace Gem
 {
@@ -28,7 +29,7 @@ struct GemData
 	
 };
 
-inline bool operator==(const Gem::GemData& A, const Gem::GemData& B)
+CONST inline bool operator==(const Gem::GemData& A, const Gem::GemData& B)
 {
 	return A.id == B.id;
 }

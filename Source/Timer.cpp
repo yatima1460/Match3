@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <algorithm>
+#include "Game/Functional.hpp"
 
 float clamp(float n, float lower, float upper)
 {
@@ -18,18 +19,18 @@ TimerData::TimerData() : NOW(SDL_GetPerformanceCounter()), LAST(SDL_GetPerforman
     
 }
 
-float DeltaTime(const TimerData data)
+CONST float DeltaTime(const TimerData data)
 {
     return ((data.NOW - data.LAST) * 1000.0f / SDL_GetPerformanceFrequency());
 }
 
-TimerData FPS(TimerData data)
+CONST TimerData FPS(TimerData data)
 {
     data.FPS = clamp((float)((1000.0 / DeltaTime(data)) * FPS_LINEAR_INTERPOLATION + data.FPS * (1.0f - FPS_LINEAR_INTERPOLATION)), 1, 1000);
     return data;
 }
 
-TimerData Ticked(TimerData data)
+CONST TimerData Ticked(TimerData data)
 {
     data.LAST = data.NOW;
     data.NOW = SDL_GetPerformanceCounter();

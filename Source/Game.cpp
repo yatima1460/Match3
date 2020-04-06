@@ -47,7 +47,7 @@ void Clean(Graphics::GraphicsData graphics)
     std::cout << "Engine cleaned" << std::endl;
 }
 
-void MainLoop(Graphics::GraphicsData graphics)
+void MainLoop(const Graphics::GraphicsData &graphics)
 {
     // Main loop
 
@@ -61,7 +61,7 @@ void MainLoop(Graphics::GraphicsData graphics)
     SDL_Event e;
 
     // TODO: load gems data from JSON?
-    std::vector<Gem::GemData> gems = {Gem::GemData("ruby"), Gem::GemData("sapphire"), Gem::GemData("topaz"), Gem::GemData("diamond")};
+    std::vector<Gem::GemData> gems = {Gem::GemData("ruby"), Gem::GemData("sapphire"), Gem::GemData("topaz"), Gem::GemData("diamond"), Gem::GemData("amethyst")};
 
     auto world = World::GenerateEmpty(Settings::get<int>("world_size"), gems);
 
@@ -182,7 +182,7 @@ void MainLoop(Graphics::GraphicsData graphics)
         Game::DrawLevel(graphics, world, backgroundTexture, mouseSelection, mouseScreenPosition, textureSize);
 
 #ifdef WIN32
-// on Windows it seems SDL returns that vsync is enabled even when not true, needs more investigation
+        // on Windows it seems SDL returns that vsync is enabled even when not true, needs more investigation
         int time = SDL_GetTicks() - start;
         if (time < 0)
             continue; // if time is negative, the time probably overflew, so continue asap
@@ -196,7 +196,7 @@ void MainLoop(Graphics::GraphicsData graphics)
     }
 }
 
-void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, UI::SelectionData selection, Vector2i mouseLocation, const int textureSize)
+void DrawLevel(const Graphics::GraphicsData &graphics, const World::WorldData &world, const TexturePointer::TexturePointerData &background, const UI::SelectionData &selection, const Vector2i &mouseLocation, const int textureSize)
 {
     Graphics::ClearBuffers(graphics);
     Graphics::DrawTexture(graphics, background, {0, 0});
@@ -228,7 +228,7 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
     Graphics::SendBufferToScreen(graphics);
 }
 
-void DrawWorld(Graphics::GraphicsData graphics, World::WorldData world, const int textureSize)
+void DrawWorld(const Graphics::GraphicsData &graphics, const World::WorldData &world, const int textureSize)
 {
     for (int y = 0; y < world.side; y++)
     {

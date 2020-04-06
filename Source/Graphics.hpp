@@ -28,18 +28,18 @@ void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData
 void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &texture, const Vector2i &point);
 
 // Swaps the graphics buffer, sends the image to the monitor
-void SendBufferToScreen(GraphicsData);
+void SendBufferToScreen(const GraphicsData& graphics);
 
- SDL_Rect MeasureText(GraphicsData graphics, const std::string &String);
+SDL_Rect MeasureText(GraphicsData graphics, const std::string &String);
 
 void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position, SDL_Color Color, TTF_Font &Font);
 
- SDL_Rect MeasureText(const std::string &String, TTF_Font &Font);
+SDL_Rect MeasureText(const std::string &String, TTF_Font &Font);
 
- TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string& path);
+TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string &path);
 
- TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string& path);
+TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string &path);
 
- void Clean(GraphicsData graphics);
+void Clean(GraphicsData graphics);
 
 } // namespace Graphics

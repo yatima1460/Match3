@@ -129,7 +129,7 @@ void Clean(GraphicsData graphics)
     std::cout << "SDL cleaned" << std::endl;
 }
 
-void SendBufferToScreen(GraphicsData graphics)
+void SendBufferToScreen(const GraphicsData& graphics)
 {
     assert(graphics.SDLRenderer != nullptr);
     SDL_RenderPresent(graphics.SDLRenderer);

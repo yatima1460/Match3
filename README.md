@@ -44,9 +44,10 @@ Not supported yet
 
 - Falling animation tied to delta time
 - Remove ugly static structs like AssetManager and Settings
-- Add pure compiler-specific keywords around
+- ~Add pure compiler-specific keywords around~
 - Some type of logging
 - Sound
+- ~Google Test~
 - Clang build too
 - MessageBoxes for code errors
 - Load game data from json files and replace Settings.ini too?
