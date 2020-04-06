@@ -5,7 +5,7 @@
 namespace World
 {
 
-bool IsPositionStable(const WorldData world,const Vector2i position)
+bool IsPositionStable(const WorldData& world,const Vector2i position)
 {
 
     for (int y = position.y + 1; y < world.side; y++)
@@ -17,7 +17,7 @@ bool IsPositionStable(const WorldData world,const Vector2i position)
     return true;
 }
 
-WorldData Generate(const int side, const std::vector<Gem::GemData> gemData)
+WorldData Generate(const int side, const std::vector<Gem::GemData>& gemData)
 {
 
     assert(side >= 3);
@@ -102,7 +102,7 @@ bool HasHoles(const WorldData world)
     return !IsFilledWithGems(world);
 }
 
-bool IsFilledWithGems(const WorldData world)
+bool IsFilledWithGems(const WorldData& world)
 {
     for (int y = 0; y < world.side; y++)
     {

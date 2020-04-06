@@ -17,17 +17,14 @@ struct BackgroundData
 void Start()
 {
 
- if (!Settings::load())
+    if (!Settings::load())
     {
         std::cout << "Can't load settings from .ini file" << std::endl;
         abort();
     }
 
-   
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
     Graphics::GraphicsData graphics = Graphics::Init();
-
-   
 
     // Load all the files inside the input directory
     AssetManager::Init(Settings::get<std::string>("assets_path"), graphics);
@@ -75,10 +72,15 @@ void MainLoop(Graphics::GraphicsData graphics)
 
     const auto textureSize = Settings::get<int>("texture_size");
     const auto gravityPixelsPerFrame = Settings::get<int>("gravityPixelsPerFrame");
+    const auto millisecondsForFrame = 1000.0f / Settings::get<float>("FPS");
 
     bool quit = false;
     while (!quit)
     {
+#ifdef WIN32
+        int start = SDL_GetTicks();
+#endif
+
         timer = Timer::Ticked(timer);
 
         while (SDL_PollEvent(&e) != 0)
@@ -178,6 +180,19 @@ void MainLoop(Graphics::GraphicsData graphics)
         world = World::ApplyGravity(world, gravityPixelsPerFrame, textureSize);
 
         Game::DrawLevel(graphics, world, backgroundTexture, mouseSelection, mouseScreenPosition, textureSize);
+
+#ifdef WIN32
+// on Windows it seems SDL returns that vsync is enabled even when not true, needs more investigation
+        int time = SDL_GetTicks() - start;
+        if (time < 0)
+            continue; // if time is negative, the time probably overflew, so continue asap
+
+        int sleepTime = millisecondsForFrame - time;
+        if (sleepTime > 0)
+        {
+            SDL_Delay(sleepTime);
+        }
+#endif
     }
 }
 

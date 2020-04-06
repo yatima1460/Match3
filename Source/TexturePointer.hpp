@@ -15,5 +15,5 @@ struct TexturePointerData
     std::string Path = "";
 };
 
- Vector2i GetSize(const TexturePointer::TexturePointerData texture);
+ Vector2i GetSize(const TexturePointer::TexturePointerData& texture);
 } // namespace TexturePointer

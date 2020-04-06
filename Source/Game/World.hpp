@@ -17,13 +17,13 @@ struct WorldData
 };
 
 // Returns true if there are no holes in the world and all gems are stable
-bool IsFilledWithGems(const WorldData world);
+bool IsFilledWithGems(const WorldData& world);
 
 // Directly swaps two gems, doesn't care about distances or rules
 WorldData Swap(WorldData world, const Vector2i position1, const Vector2i position2);
 
 // Returns true if the x,y coordinate is valid
-inline bool IsCoordinateInside(const World::WorldData world, const Vector2i coord)
+inline bool IsCoordinateInside(const World::WorldData& world, const Vector2i coord)
 {
     return coord.x >= 0 && coord.y >= 0 && coord.x < world.side && coord.y < world.side;
 }
@@ -32,7 +32,7 @@ inline bool IsCoordinateInside(const World::WorldData world, const Vector2i coor
 WorldData SpawnNewGems(WorldData world);
 
 // Initializes internal grid
-WorldData Generate(const int side, const std::vector<Gem::GemData> gemData);
+WorldData Generate(const int side, const std::vector<Gem::GemData>& gemData);
 
 // Checks for matches and returns a new world with maybe holes
 WorldData RemoveGemsMatches(WorldData world);
@@ -41,6 +41,6 @@ WorldData RemoveGemsMatches(WorldData world);
 WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int textureSize);
 
 // Returns true if the position can't be affected by gravity
-bool IsPositionStable(const WorldData world, const Vector2i position);
+bool IsPositionStable(const WorldData& world, const Vector2i position);
 
 } // namespace World
