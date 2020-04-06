@@ -23,7 +23,7 @@ Game demo with SDL2, C++11 with functional programming
 4. `make -C build -j`
 
 ### Run 
-4. `./build/Output/Match3`
+4. `./build/Match3`
 
 ## Windows
 

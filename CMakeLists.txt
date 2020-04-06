@@ -4,9 +4,6 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the source code and call cmake from there. Thank you.")
 endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Libraries)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Libraries)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Output)
 
 
 # Create project
@@ -87,6 +84,6 @@ if (UNIX AND NOT APPLE AND NOT ANDROID)
 endif()
 
 # Copy Assets folder to build directory
-file(COPY Assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+file(COPY Assets DESTINATION ${PROJECT_BINARY_DIR})
 
-file(COPY Settings.ini DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+file(COPY Settings.ini DESTINATION ${PROJECT_BINARY_DIR})
