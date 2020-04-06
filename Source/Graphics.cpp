@@ -158,7 +158,6 @@ void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position,
         Message_rect.w = creditsSurface->w; // controls the width of the rect
         Message_rect.h = creditsSurface->h; // controls the height of the rect
 
-        assert(creditsSurface != nullptr);
         SDL_FreeSurface(creditsSurface);
 
         assert(graphics.SDLRenderer != nullptr);
@@ -210,7 +209,6 @@ SDL_Rect MeasureText(const std::string &String, TTF_Font &Font)
     if (creditsSurface)
     {
         SDL_Rect r = creditsSurface->clip_rect;
-        assert(creditsSurface != nullptr);
         SDL_FreeSurface(creditsSurface);
         return r;
     }
