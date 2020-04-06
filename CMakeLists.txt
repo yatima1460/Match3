@@ -57,22 +57,33 @@ if(WIN32)
 endif()
 
 
-if (UNIX AND NOT APPLE AND NOT ANDROID)
+if (UNIX)
 
-    # Linux
-    find_program(LSB_RELEASE_EXEC lsb_release)
-    execute_process(COMMAND ${LSB_RELEASE_EXEC} -is OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT OUTPUT_STRIP_TRAILING_WHITESPACE)
-    message("Your distro is ${LSB_RELEASE_ID_SHORT}")
-    find_package(SDL2 REQUIRED)
-    if ("${LSB_RELEASE_ID_SHORT}" STREQUAL "Arch")
-        message("Arch distro detected, using Arch CMake linkage")
-        target_link_libraries(Match3 SDL2::SDL2)
-    else ()
-        message("Non-Arch distro detected, using normal linkage")
+
+    if (NOT APPLE AND NOT ANDROID)
+        # Linux
+        find_program(LSB_RELEASE_EXEC lsb_release)
+        execute_process(COMMAND ${LSB_RELEASE_EXEC} -is OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT OUTPUT_STRIP_TRAILING_WHITESPACE)
+        message("Your distro is ${LSB_RELEASE_ID_SHORT}")
+        find_package(SDL2 REQUIRED)
+        if ("${LSB_RELEASE_ID_SHORT}" STREQUAL "Arch")
+            # Arch only build
+            target_link_libraries(Match3 SDL2::SDL2)
+        else ()
+            # Non-Arch distro
+            string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES) # Fix because CMake is stupid, remove trailing spaces
+            include_directories(Match3 ${SDL2_INCLUDE_DIRS})
+            target_link_libraries(Match3 ${SDL2_LIBRARIES})
+        endif ()
+    endif()
+
+    if (APPLE)
+        # MacOS
+        find_package(SDL2 REQUIRED)
         string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES) # Fix because CMake is stupid, remove trailing spaces
         include_directories(Match3 ${SDL2_INCLUDE_DIRS})
         target_link_libraries(Match3 ${SDL2_LIBRARIES})
-    endif ()
+    endif()
 
     # Load SDL2 ttf
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
