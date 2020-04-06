@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 3.10)
 
 project(DP_Example)
 
@@ -21,6 +21,9 @@ download_project(PROJ googletest
         GIT_TAG release-1.10.0
         ${UPDATE_DISCONNECTED_IF_AVAILABLE}
         )
+
+
+
 
 # Prevent GoogleTest from overriding our compiler/linker options
 # when building with Visual Studio
@@ -47,4 +50,9 @@ include_directories("../Source/Game")
 
 
 target_link_libraries(Match3Test gtest gmock_main)
-add_test(NAME test COMMAND Match3Test)
+
+include(GoogleTest)
+
+
+gtest_discover_tests(Match3Test)
+
