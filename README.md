@@ -42,8 +42,11 @@ Not supported yet
 
 # TODO
 
+- Add pure compiler-specific keywords around
+- Sound
 - MessageBoxes for code errors
 - Load game data from json files and replace Settings.ini too?
+- Add other backends like OpenGL, DirectX, Vulkan?
 
 # Credits
 
