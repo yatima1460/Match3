@@ -43,7 +43,7 @@ public:
         return texture_files[name];
     }
     // static const Font& GetFont(const std::string name);
-    [[nodiscard]] static SDL_Surface *LoadSDLSurfaceFromPNG(const std::string path);
+     static SDL_Surface *LoadSDLSurfaceFromPNG(const std::string path);
 
     static void Unload();
 };

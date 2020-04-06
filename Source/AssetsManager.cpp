@@ -129,7 +129,7 @@ const std::string &AssetManager::GetString(const std::string name)
     return text_files[name];
 }
 
-[[nodiscard]] SDL_Surface *AssetManager::LoadSDLSurfaceFromPNG(const std::string path)
+ SDL_Surface *AssetManager::LoadSDLSurfaceFromPNG(const std::string path)
 {
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;

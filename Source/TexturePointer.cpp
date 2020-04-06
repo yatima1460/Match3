@@ -10,7 +10,7 @@
 namespace TexturePointer
 {
 
-[[nodiscard]] Vector2i GetSize(const TexturePointerData texture)
+ Vector2i GetSize(const TexturePointerData texture)
 {
     Vector2i size;
     assert(texture.internal != nullptr);

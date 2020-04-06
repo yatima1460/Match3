@@ -50,7 +50,7 @@ public:
     }
 
     template <typename T>
-    [[nodiscard]] static T get(std::string key)
+     static T get(std::string key)
     {
         if (!loaded)
             throw std::logic_error("Settings is not loaded yet");
@@ -82,11 +82,11 @@ public:
      * Loads and validates settings from file
      * @return true if loaded, false if error
      */
-    [[nodiscard]] static bool load();
+     static bool load();
 
     /**
      * Save settings to file
      * @return true if saved, false if error
      */
-    [[nodiscard]] static bool save();
+     static bool save();
 };
