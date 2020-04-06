@@ -169,7 +169,7 @@ void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position,
     }
 }
 
-TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path)
+TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string& path)
 {
     SDL_Surface *surf = AssetManager::LoadSDLSurfaceFromPNG(path);
     assert(surf != nullptr);
@@ -183,7 +183,7 @@ TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, con
     return td;
 }
 
-TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path)
+TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string& path)
 {
 
     TexturePointer::TexturePointerData td;

@@ -17,7 +17,7 @@ struct GemData
 	{
 	}
 
-	GemData(std::string id) : id(id)
+	GemData(const std::string& id) : id(id)
 	{
 		drawingOffset = {0, 0};
 	}

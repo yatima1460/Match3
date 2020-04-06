@@ -34,7 +34,7 @@ inline Vector2i GridPositionToScreenPosition(const Vector2i gridLocation, const 
     return {gridLocation.x * textureSize, gridLocation.y * textureSize};
 }
 
-inline void DrawTextureAtGridPosition(const Graphics::GraphicsData graphics, const TexturePointer::TexturePointerData texture, const Vector2i gridPosition, const int gridSize)
+inline void DrawTextureAtGridPosition(const Graphics::GraphicsData& graphics, const TexturePointer::TexturePointerData& texture, const Vector2i gridPosition, const int gridSize)
 {
     const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPosition, gridSize);
     Graphics::DrawTexture(graphics, texture, positionToDrawSelection);

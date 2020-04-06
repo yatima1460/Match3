@@ -97,7 +97,7 @@ WorldData SpawnNewGems(WorldData world)
     return world;
 }
 
-bool HasHoles(const WorldData world)
+bool HasHoles(const WorldData& world)
 {
     return !IsFilledWithGems(world);
 }

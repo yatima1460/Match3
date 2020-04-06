@@ -33,17 +33,17 @@ public:
     static std::string assets_folder;
 
     static bool LoadFile(const fs::directory_entry de, Graphics::GraphicsData graphics);
-    static bool Init(const std::string assets_folder, Graphics::GraphicsData graphic);
+    static bool Init(const std::string& assets_folder, Graphics::GraphicsData graphic);
 
-    static const std::string &GetString(const std::string name);
-    inline static const TexturePointer::TexturePointerData &GetTextureData(const std::string name)
+    static const std::string &GetString(const std::string& name);
+    inline static const TexturePointer::TexturePointerData &GetTextureData(const std::string& name)
     {
         assert(!texture_files.empty());
         assert(texture_files[name].internal != nullptr);
         return texture_files[name];
     }
     // static const Font& GetFont(const std::string name);
-     static SDL_Surface *LoadSDLSurfaceFromPNG(const std::string path);
+     static SDL_Surface *LoadSDLSurfaceFromPNG(const std::string& path);
 
     static void Unload();
 };

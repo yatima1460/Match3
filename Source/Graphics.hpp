@@ -36,9 +36,9 @@ void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position,
 
  SDL_Rect MeasureText(const std::string &String, TTF_Font &Font);
 
- TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path);
+ TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string& path);
 
- TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path);
+ TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string& path);
 
  void Clean(GraphicsData graphics);
 

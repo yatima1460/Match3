@@ -87,7 +87,7 @@ bool AssetManager::LoadFile(const fs::directory_entry de, Graphics::GraphicsData
     return false;
 }
 
-bool AssetManager::Init(const std::string assets_folder, Graphics::GraphicsData graphics)
+bool AssetManager::Init(const std::string& assets_folder, Graphics::GraphicsData graphics)
 {
 
     //logger->info("Initializing asset manager");
@@ -123,13 +123,13 @@ bool AssetManager::Init(const std::string assets_folder, Graphics::GraphicsData 
     return true;
 }
 
-const std::string &AssetManager::GetString(const std::string name)
+const std::string &AssetManager::GetString(const std::string& name)
 {
     assert(!text_files.empty());
     return text_files[name];
 }
 
- SDL_Surface *AssetManager::LoadSDLSurfaceFromPNG(const std::string path)
+ SDL_Surface *AssetManager::LoadSDLSurfaceFromPNG(const std::string& path)
 {
     int req_format = STBI_rgb_alpha;
     int width, height, orig_format;
