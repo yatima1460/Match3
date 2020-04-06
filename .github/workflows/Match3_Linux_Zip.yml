@@ -1,0 +1,19 @@
+name: Match3_Linux
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - run: sudo apt install build-essential cmake libsdl2-dev libsdl2-ttf-dev
+    - run: mkdir build && cd build && cmake ..
+    - run: make -C build -j
+    - run: cd build && zip Match3 Assets Settings.ini
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Match3-x64-Linux.zip
+        path: build/Match3.zip
