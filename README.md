@@ -40,6 +40,11 @@ Not supported yet
 2. `mkdir build && cd build && cmake ..`
 3. `make -C build -j`
 
+# TODO
+
+- MessageBoxes for code errors
+- Load game data from json files and replace Settings.ini too?
+
 # Credits
 
 License doesn't apply to assets
