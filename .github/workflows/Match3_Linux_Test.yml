@@ -1,15 +1,15 @@
-name: Match3_MacOS
+name: Match3_Linux_Zip
 
 on: [push]
 
 jobs:
   build:
 
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v1
-    - run: brew install sdl2 sdl2_ttf
+    - run: sudo apt install build-essential cmake libsdl2-dev libsdl2-ttf-dev
     - run: mkdir build && cd build && cmake ..
     - run: make -C build -j
     - run: ./build/Tests/Match3Test

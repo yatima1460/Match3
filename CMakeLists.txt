@@ -97,3 +97,6 @@ endif()
 file(COPY Assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(COPY Settings.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+enable_testing()
+add_subdirectory(Tests)

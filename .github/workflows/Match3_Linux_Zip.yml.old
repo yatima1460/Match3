@@ -13,7 +13,13 @@ jobs:
     - run: mkdir build && cd build && cmake ..
     - run: make -C build -j
     - run: cd build && zip Match3 Assets Settings.ini
-    - uses: actions/upload-artifact@v1
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: Match3-x64-Linux.zip
-        path: build/Match3.zip
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false

@@ -17,7 +17,8 @@ bool IsPositionStable(const WorldData& world,const Vector2i position)
     return true;
 }
 
-WorldData Generate(const int side, const std::vector<Gem::GemData>& gemData)
+
+WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemData)
 {
 
     assert(side >= 3);
@@ -38,9 +39,25 @@ WorldData Generate(const int side, const std::vector<Gem::GemData>& gemData)
     {
         for (int x = 0; x < side; x++)
         {
-            wd.data[x][y].id = "";
+            wd.data[x][y] = gemData[rand() % gemData.size()];
         }
     }
+
+    return wd;
+}
+
+WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData>& gemData)
+{
+    assert(side >= 3);
+    assert(gemData.size() != 0);
+    WorldData wd;
+
+    wd.gemData = gemData;
+    wd.side = side;
+
+    wd.data.resize(side);
+    for (int i = 0; i < side; i++)
+        wd.data[i].resize(side);
 
     return wd;
 }

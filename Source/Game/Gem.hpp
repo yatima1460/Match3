@@ -21,5 +21,16 @@ struct GemData
 	{
 		drawingOffset = {0, 0};
 	}
+
+
+  
+
+	
 };
+
+inline bool operator==(const Gem::GemData A, const Gem::GemData B)
+{
+	return A.id == B.id;
+}
+
 } // namespace Gem

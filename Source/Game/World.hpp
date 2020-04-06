@@ -14,7 +14,11 @@ struct WorldData
     int side = 0;
     std::vector<std::vector<Gem::GemData>> data;
     std::vector<Gem::GemData> gemData;
+
+  
 };
+
+
 
 // Returns true if there are no holes in the world and all gems are stable
 bool IsFilledWithGems(const WorldData& world);
@@ -31,8 +35,11 @@ inline bool IsCoordinateInside(const World::WorldData& world, const Vector2i coo
 // Spawn gems in empty holes of the first row
 WorldData SpawnNewGems(WorldData world);
 
-// Initializes internal grid
-WorldData Generate(const int side, const std::vector<Gem::GemData>& gemData);
+// Generate internal grid as empty
+WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData>& gemData);
+
+// Generate the entire grid picking randomly from gemData
+WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemData);
 
 // Checks for matches and returns a new world with maybe holes
 WorldData RemoveGemsMatches(WorldData world);
@@ -44,3 +51,14 @@ WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int text
 bool IsPositionStable(const WorldData& world, const Vector2i position);
 
 } // namespace World
+
+
+inline bool operator==(const World::WorldData& A, const World::WorldData& B)
+{
+	return A.data == B.data;
+}
+
+inline bool operator!=(const World::WorldData& A, const World::WorldData& B)
+{
+	return A.data != B.data;
+}

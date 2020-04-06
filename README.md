@@ -4,7 +4,7 @@
 |-------|-----|-------|-----|
 | build | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Linux/badge.svg) | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Windows/badge.svg) | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_MacOS/badge.svg)
 | cppcheck | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Linux_cppcheck/badge.svg)| N/A | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_MacOS_cppcheck/badge.svg)
-| test | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Test_Linux/badge.svg) |![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Test_Windows/badge.svg) | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Test_MacOS/badge.svg)|
+| test | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Linux_Test/badge.svg) |![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_Windows_Test/badge.svg) | ![Actions Status](https://github.com/yatima1460/Match3/workflows/Match3_MacOS_Test/badge.svg)|
 
 Game demo with SDL2, C++11 with functional programming
 

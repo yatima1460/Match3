@@ -63,7 +63,7 @@ void MainLoop(Graphics::GraphicsData graphics)
     // TODO: load gems data from JSON?
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
-    auto world = World::Generate(Settings::get<int>("world_size"), gems);
+    auto world = World::GenerateEmpty(Settings::get<int>("world_size"), gems);
 
     mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
     mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");

@@ -1,0 +1,22 @@
+name: Match3_Windows
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - run: mkdir build && cd build && cmake ..
+
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+
+    - name: MSBuild
+      working-directory: build
+      run: msbuild Match3.sln
+
+    - run: ./build/Tests/Match3Test
+      
