@@ -11,5 +11,5 @@ jobs:
     - uses: actions/checkout@v1
     - run: brew update
     - run: brew install cppcheck
-    - run: cppcheck --enable=style -v Source
+    - run: cppcheck --enable=style --error-exitcode=1 -v Source
       
