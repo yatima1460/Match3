@@ -44,10 +44,13 @@ Not supported yet
 
 - Remove ugly static structs like AssetManager and Settings
 - Add pure compiler-specific keywords around
+- Some type of logging
 - Sound
 - MessageBoxes for code errors
 - Load game data from json files and replace Settings.ini too?
+- Android build?
 - Add other backends like OpenGL, DirectX, Vulkan?
+- Score?
 
 # Credits
 
