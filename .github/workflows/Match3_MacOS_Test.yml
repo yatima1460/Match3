@@ -1,4 +1,4 @@
-name: Match3_MacOS
+name: Match3_MacOS_Test
 
 on: [push]
 

@@ -1,4 +1,4 @@
-name: Match3_Windows
+name: Match3_Windows_Test
 
 on: [push]
 
