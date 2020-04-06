@@ -5,7 +5,7 @@
 namespace World
 {
 
-bool IsPositionStable(WorldData world, Vector2i position)
+bool IsPositionStable(const WorldData world,const Vector2i position)
 {
 
     for (int y = position.y + 1; y < world.side; y++)

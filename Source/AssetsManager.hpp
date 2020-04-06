@@ -22,7 +22,7 @@ namespace fs = ghc::filesystem;
 
 // #include <Game/Map.hpp>
 
-class AssetManager
+struct AssetManager
 {
 
 public:

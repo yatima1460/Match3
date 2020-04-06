@@ -16,6 +16,7 @@ namespace Graphics
 GraphicsData Init()
 {
     GraphicsData gd;
+
     //Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
@@ -25,16 +26,13 @@ GraphicsData Init()
 
     const int textureSize = Settings::get<int>("texture_size");
     const int worldSize = Settings::get<int>("world_size");
-    // SDLWindow = SDL_CreateWindow(
-    //         Settings::get<std::string>("window_name").c_str(),
-    //         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    //         -1, -1,
-    //         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_RENDERER_ACCELERATED);
+
     gd.SDLWindow = SDL_CreateWindow(
         Settings::get<std::string>("window_name").c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         textureSize * worldSize, textureSize * worldSize,
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_RENDERER_ACCELERATED);
+
     if (gd.SDLWindow == nullptr)
     {
         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -49,6 +47,11 @@ GraphicsData Init()
     //TODO: free surface icon
 
     gd.SDLRenderer = SDL_CreateRenderer(gd.SDLWindow, -1, SDL_RENDERER_ACCELERATED);
+
+    SDL_RendererInfo rendererInfo;
+    SDL_GetRendererInfo(gd.SDLRenderer, &rendererInfo);
+
+    std::cout << "Renderer: " << rendererInfo.name << std::endl;
 
     TTF_Init();
     const auto fontPath =
@@ -124,10 +127,7 @@ void Clean(GraphicsData graphics)
     //Quit SDL subsystems
     SDL_Quit();
     std::cout << "SDL cleaned" << std::endl;
-
 }
-
-
 
 void SendBufferToScreen(GraphicsData graphics)
 {
@@ -142,41 +142,33 @@ void ClearBuffers(GraphicsData graphics)
     SDL_RenderClear(graphics.SDLRenderer);
 }
 
+void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position, SDL_Color Color, TTF_Font &Font)
+{
+    SDL_Surface *creditsSurface = TTF_RenderText_Blended(&Font, Text.c_str(), Color);
 
+    // is null if string has length zero
+    if (creditsSurface)
+    {
+        SDL_Texture *creditsTexture = SDL_CreateTextureFromSurface(graphics.SDLRenderer, creditsSurface);
+        assert(creditsTexture != nullptr);
 
-// void DrawText(GraphicsData graphics, const std::string& Text, Vector2i Position, SDL_Color Color, TTF_Font& Font)
-// {
-//     SDL_Surface* creditsSurface = TTF_RenderText_Blended(&Font, Text.c_str(), Color);
+        SDL_Rect Message_rect;              //create a rect
+        Message_rect.x = Position.x;        //controls the rect's x coordinate
+        Message_rect.y = Position.y;        // controls the rect's y coordinte
+        Message_rect.w = creditsSurface->w; // controls the width of the rect
+        Message_rect.h = creditsSurface->h; // controls the height of the rect
 
-//     // is null if string has length zero
-//     if (creditsSurface)
-//     {
-//         SDL_Texture* creditsTexture = SDL_CreateTextureFromSurface(SDLRenderer, creditsSurface);
-//         assert(creditsTexture != nullptr);
+        assert(creditsSurface != nullptr);
+        SDL_FreeSurface(creditsSurface);
 
-//         SDL_Rect Message_rect; //create a rect
-//         Message_rect.x = Position.x;  //controls the rect's x coordinate
-//         Message_rect.y = Position.y; // controls the rect's y coordinte
-//         Message_rect.w = creditsSurface->w; // controls the width of the rect
-//         Message_rect.h = creditsSurface->h; // controls the height of the rect
+        assert(graphics.SDLRenderer != nullptr);
+        assert(creditsTexture != nullptr);
+        SDL_RenderCopy(graphics.SDLRenderer, creditsTexture, nullptr, &Message_rect);
 
-//         assert(creditsSurface != nullptr);
-//         SDL_FreeSurface(creditsSurface);
-
-//         assert(SDLRenderer != nullptr);
-//         assert(creditsTexture != nullptr);
-//         SDL_RenderCopy(SDLRenderer, creditsTexture, nullptr, &Message_rect);
-
-//         assert(creditsTexture != nullptr);
-//         SDL_DestroyTexture(creditsTexture);
-
-//     }
-// }
-
-// void Graphics::DrawText(const std::string& Text, Vector2i Position, SDL_Color Color)
-// {
-//     Graphics::DrawText(Text, Position, Color, Graphics::GetDefaultFont());
-// }
+        assert(creditsTexture != nullptr);
+        SDL_DestroyTexture(creditsTexture);
+    }
+}
 
 TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path)
 {
@@ -245,7 +237,6 @@ void Graphics::DrawTexture(Texture& texture, SDL_Rect* dest)
 }
 */
 
-
 void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &texture, const Vector2i &point)
 {
 
@@ -253,8 +244,7 @@ void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData
     assert(s.x != 0);
     assert(s.y != 0);
 
-    SDL_Rect r = {point.x,point.y,s.x,s.y};
-
+    SDL_Rect r = {point.x, point.y, s.x, s.y};
 
     auto sdlt = texture.internal;
     assert(sdlt != nullptr);
@@ -262,6 +252,5 @@ void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData
     assert(graphics.SDLRenderer != nullptr);
     SDL_RenderCopy(graphics.SDLRenderer, sdlt, nullptr, &r);
 }
-
 
 } // namespace Graphics

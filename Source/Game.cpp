@@ -7,8 +7,6 @@
 #include <iostream>
 #include "UI.hpp"
 
-
-
 namespace Game
 {
 
@@ -16,30 +14,27 @@ struct BackgroundData
 {
 };
 
-
-
 void Start()
 {
 
-    
-
-    if (!Settings::load())
+ if (!Settings::load())
     {
         std::cout << "Can't load settings from .ini file" << std::endl;
         abort();
     }
 
+   
     //The asset manager needs an OpenGL context to create the textures, so we initialize graphics first
     Graphics::GraphicsData graphics = Graphics::Init();
+
+   
 
     // Load all the files inside the input directory
     AssetManager::Init(Settings::get<std::string>("assets_path"), graphics);
 
-
     MainLoop(graphics);
 
     Game::Clean(graphics);
-
 }
 
 void Clean(Graphics::GraphicsData graphics)
@@ -53,7 +48,6 @@ void Clean(Graphics::GraphicsData graphics)
     std::cout << "Graphics cleaned" << std::endl;
 
     std::cout << "Engine cleaned" << std::endl;
-
 }
 
 void MainLoop(Graphics::GraphicsData graphics)
@@ -66,9 +60,10 @@ void MainLoop(Graphics::GraphicsData graphics)
 
     const auto backgroundTexture = AssetManager::GetTextureData("background");
 
-    SelectionData mouseSelection;
+    UI::SelectionData mouseSelection;
     SDL_Event e;
-    
+
+    // TODO: load gems data from JSON?
     std::vector<Gem::GemData> gems = {{"ruby"}, {"sapphire"}, {"topaz"}, {"diamond"}};
 
     auto world = World::Generate(Settings::get<int>("world_size"), gems);
@@ -76,11 +71,10 @@ void MainLoop(Graphics::GraphicsData graphics)
     mouseSelection.OpenTexture = AssetManager::GetTextureData("selection_open");
     mouseSelection.LockedTexture = AssetManager::GetTextureData("selection_locked");
 
+    Vector2i mouseScreenPosition = {0, 0};
 
-	Vector2i mouseScreenPosition = { 0, 0};
-
-    
     const auto textureSize = Settings::get<int>("texture_size");
+    const auto gravityPixelsPerFrame = Settings::get<int>("gravityPixelsPerFrame");
 
     bool quit = false;
     while (!quit)
@@ -118,7 +112,6 @@ void MainLoop(Graphics::GraphicsData graphics)
                             else
                             {
                                 // If the player selected one and clicks again we check if the swap can be done
-                                //TODO: swap check here
 
                                 if (UI::IsNearbyTaxiDistance(currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition))
                                 {
@@ -182,16 +175,16 @@ void MainLoop(Graphics::GraphicsData graphics)
         world = World::RemoveGemsMatches(world);
 
         world = World::SpawnNewGems(world);
-        world = World::ApplyGravity(world, Settings::get<int>("gravityPixelsPerFrame"), textureSize);
+        world = World::ApplyGravity(world, gravityPixelsPerFrame, textureSize);
 
         Game::DrawLevel(graphics, world, backgroundTexture, mouseSelection, mouseScreenPosition, textureSize);
     }
 }
 
-void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, SelectionData selection, Vector2i mouseLocation, const int textureSize)
+void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TexturePointer::TexturePointerData background, UI::SelectionData selection, Vector2i mouseLocation, const int textureSize)
 {
     Graphics::ClearBuffers(graphics);
-    Graphics::DrawTexture(graphics, background, {0,0});
+    Graphics::DrawTexture(graphics, background, {0, 0});
     Game::DrawWorld(graphics, world, textureSize);
 
     const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, textureSize);
@@ -199,7 +192,7 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
     // Draw selection square only if the world has done the fallings and is static
     if (World::IsFilledWithGems(world))
     {
-        
+
         if (selection.SelectionLocked)
         {
             // If selection is locked we draw the first one at the saved click position
@@ -215,9 +208,6 @@ void DrawLevel(Graphics::GraphicsData graphics, World::WorldData world, TextureP
             if (selection.MouseMovedAtLeastOnce && World::IsCoordinateInside(world, currentMouseGridPosition))
                 UI::DrawTextureAtGridPosition(graphics, selection.OpenTexture, currentMouseGridPosition, textureSize);
         }
-        
-      
-
     }
 
     Graphics::SendBufferToScreen(graphics);

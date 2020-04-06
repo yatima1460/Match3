@@ -6,6 +6,24 @@
 namespace UI
 {
 
+struct SelectionData
+{
+    // Texture to use when the selection hovers on the world
+    TexturePointer::TexturePointerData OpenTexture;
+
+    // Texture to use when the first selection is locked
+    TexturePointer::TexturePointerData LockedTexture;
+
+    // World grid location of the first selection
+    Vector2i FirstSelectionLockedGridPosition;
+
+    // True when the player clicked on a cell
+    bool SelectionLocked = false;
+
+    // Prevent drawing the selection at position 0,0 in the start
+    bool MouseMovedAtLeastOnce = false;
+};
+
 inline Vector2i ScreenPositionToGridPosition(const Vector2i screenLocation, const int textureSize)
 {
     return {(screenLocation.x / textureSize), (screenLocation.y / textureSize)};
@@ -16,7 +34,7 @@ inline Vector2i GridPositionToScreenPosition(const Vector2i gridLocation, const 
     return {gridLocation.x * textureSize, gridLocation.y * textureSize};
 }
 
-inline void DrawTextureAtGridPosition(Graphics::GraphicsData graphics, TexturePointer::TexturePointerData texture, Vector2i gridPosition, const int gridSize)
+inline void DrawTextureAtGridPosition(const Graphics::GraphicsData graphics, const TexturePointer::TexturePointerData texture, const Vector2i gridPosition, const int gridSize)
 {
     const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPosition, gridSize);
     Graphics::DrawTexture(graphics, texture, positionToDrawSelection);
@@ -24,24 +42,8 @@ inline void DrawTextureAtGridPosition(Graphics::GraphicsData graphics, TexturePo
 
 inline bool IsNearbyTaxiDistance(const Vector2i &A, const Vector2i &B)
 {
-    if (A.x == B.x && A.y == B.y - 1)
-    {
-        return true;
-    }
-    if (A.x == B.x && A.y == B.y + 1)
-    {
-        return true;
-    }
-    if (A.x == B.x + 1 && A.y == B.y)
-    {
-        return true;
-    }
-    if (A.x == B.x - 1 && A.y == B.y)
-    {
-        return true;
-    }
-
-    return false;
+    //TODO: maybe less ugly code?
+    return ((A.x == B.x && A.y == B.y - 1) || (A.x == B.x && A.y == B.y + 1) || (A.x == B.x + 1 && A.y == B.y) || (A.x == B.x - 1 && A.y == B.y));
 }
 
 } // namespace UI

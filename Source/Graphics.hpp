@@ -21,28 +21,13 @@ GraphicsData Init();
 
 void ClearBuffers(GraphicsData graphics);
 
-[[nodiscard]] void Clean(GraphicsData graphics);
-
-// void CreateWindow();
-
-/**
-     * Draws a texture to point 0,0, using the texture size as destination rectangle
-     * @param Texture
-     */
+// Draws a texture to point 0,0, using the texture size as destination rectangle
 void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &Texture);
 
-// void DrawTexture(Texture& texture, SDL_Rect* dest);
-
-/**
-     * Draws a texture to point Position, using the texture size as destination rectangle
-     * @param texture
-     * @param point
-     */
+// Draws a texture to point Position, using the texture size as destination rectangle
 void DrawTexture(GraphicsData graphics, const TexturePointer::TexturePointerData &texture, const Vector2i &point);
 
-/**
-     * Swaps the graphics buffer, sends the image to the monitor
-     */
+// Swaps the graphics buffer, sends the image to the monitor
 void SendBufferToScreen(GraphicsData);
 
 [[nodiscard]] SDL_Rect MeasureText(GraphicsData graphics, const std::string &String);
@@ -54,5 +39,7 @@ void DrawText(GraphicsData graphics, const std::string &Text, Vector2i Position,
 [[nodiscard]] TexturePointer::TexturePointerData LoadTextureFromPNG(GraphicsData graphics, const std::string path);
 
 [[nodiscard]] TexturePointer::TexturePointerData LoadTextureFromBMP(GraphicsData graphics, const std::string path);
+
+[[nodiscard]] void Clean(GraphicsData graphics);
 
 } // namespace Graphics
