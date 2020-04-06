@@ -137,7 +137,7 @@ const std::string &AssetManager::GetString(const std::string& name)
     if (data == NULL)
     {
         SDL_Log("Loading image failed: %s", stbi_failure_reason());
-        exit(1);
+        abort();
     }
 
     int depth, pitch;

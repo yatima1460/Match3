@@ -1,13 +1,16 @@
 
+#include <cassert>
+#include <iostream>
+#include <sstream>
+#include <sstream>
+#include <string>
+
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <cassert>
 
-#include "Graphics.hpp"
-#include <iostream>
 #include "Game.hpp"
+#include "Graphics.hpp"
 #include "TexturePointer.hpp"
-
 #include "AssetsManager.hpp"
 
 namespace Graphics
@@ -40,11 +43,12 @@ GraphicsData Init(const json& settings)
         abort();
     }
 
-
-    std::string icon_path = settings["assets_path"];
-    icon_path += "/";
-    icon_path +=  settings["icon_name"];
-    SDL_Surface *surface = AssetManager::LoadSDLSurfaceFromPNG((icon_path));
+    std::stringstream icon_path;
+    icon_path << settings["assets_path"].get<std::string>();
+    icon_path << "/";
+    icon_path << settings["icon_name"].get<std::string>();
+    const std::string icon_path_str = icon_path.str();
+    SDL_Surface *surface = AssetManager::LoadSDLSurfaceFromPNG(icon_path_str);
     if (surface == nullptr)
         std::cerr << "Application icon is NULL" << std::endl;
     else
@@ -59,12 +63,15 @@ GraphicsData Init(const json& settings)
     std::cout << "Renderer: " << rendererInfo.name << std::endl;
 
     TTF_Init();
-    std::string fontPath = settings["assets_path"];
-    fontPath += "/Fonts/";
-    fontPath +=  settings["asset_font_name"];
-    gd.SmallFont = TTF_OpenFont(fontPath.c_str(), 24);
-    gd.NormalFont = TTF_OpenFont(fontPath.c_str(), 32);
-    gd.BigFont = TTF_OpenFont(fontPath.c_str(), 48);
+
+
+    std::stringstream fontPath;
+    fontPath << settings["assets_path"].get<std::string>();
+    fontPath << "/Fonts/";
+    fontPath << settings["asset_font_name"].get<std::string>();
+    gd.SmallFont = TTF_OpenFont(fontPath.str().c_str(), 24);
+    gd.NormalFont = TTF_OpenFont(fontPath.str().c_str(), 32);
+    gd.BigFont = TTF_OpenFont(fontPath.str().c_str(), 48);
     if (gd.SmallFont == nullptr)
     {
         fprintf(stderr, "error: SmallFont not found\n");

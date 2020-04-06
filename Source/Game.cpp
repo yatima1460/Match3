@@ -91,7 +91,7 @@ void MainLoop(const json& settings, const Graphics::GraphicsData &graphics)
     const auto gravityPixelsPerFrame = settings["gravityPixelsPerFrame"];
 
 #ifdef WIN32
-    const auto millisecondsForFrame = 1000.0f / Settings::get<float>("FPS");
+    const auto millisecondsForFrame = 1000.0f / settings["FPS"].get<float>();
 #endif
 
     bool quit = false;
