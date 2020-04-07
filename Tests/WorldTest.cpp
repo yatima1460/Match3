@@ -46,14 +46,14 @@ TEST(WorldTest, GenerateFilled)
 }
 
 
-TEST(WorldTest, IsFilledWithGems)
-{
-    const auto worldFilled = World::GenerateFilled(100,{Gem::GemData("a")});
-    EXPECT_TRUE(World::IsStatic(worldFilled));
+// TEST(WorldTest, IsFilledWithGems)
+// {
+//     const auto worldFilled = World::GenerateFilled(100,{Gem::GemData("a")});
+//     EXPECT_TRUE(World::IsStatic(worldFilled));
     
-    const auto worldEmpty = World::GenerateEmpty(100,{Gem::GemData("a")});
-    EXPECT_FALSE(World::IsStatic(worldEmpty));
-}
+//     const auto worldEmpty = World::GenerateEmpty(100,{Gem::GemData("a")});
+//     EXPECT_FALSE(World::IsStatic(worldEmpty));
+// }
 
 
 TEST(WorldTest, InvalidSide)
