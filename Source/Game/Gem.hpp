@@ -29,7 +29,7 @@ struct GemData
 	{
 	}
 
-	explicit GemData(const std::string &id) : id(id), drawingOffset({0, 0}), drawingOffsetGoal({0, 0}), animation(GemState::STATIC)
+	explicit GemData(const std::string &gemId) : id(gemId), drawingOffset({0, 0}), drawingOffsetGoal({0, 0}), animation(GemState::STATIC)
 	{
 	}
 };
