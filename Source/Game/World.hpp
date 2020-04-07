@@ -12,10 +12,8 @@ namespace World
 struct WorldData
 {
     int side = 0;
-    std::vector<std::vector<Gem::GemData>> data;
     std::vector<Gem::GemData> gemData;
-
-  
+    std::vector<std::vector<Gem::GemData>> data;
 };
 
 WorldData CalculateGravity(WorldData);
@@ -24,10 +22,10 @@ WorldData CalculateGravity(WorldData);
 bool IsStatic(const WorldData& world);
 
 // Directly swaps two gems, doesn't care about distances or rules
-WorldData Swap(WorldData world, const Vector2i position1, const Vector2i position2);
+WorldData Swap(WorldData world, const Vector2i& position1, const Vector2i& position2);
 
 // Returns true if the x,y coordinate is valid
-constexpr inline bool IsCoordinateInside(const World::WorldData& world, const Vector2i coord)
+CONST_FUNCTION inline bool IsCoordinateInside(const World::WorldData& world, const Vector2i coord)
 {
     return coord.x >= 0 && coord.y >= 0 && coord.x < world.side && coord.y < world.side;
 }

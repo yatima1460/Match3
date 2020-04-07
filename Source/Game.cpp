@@ -105,6 +105,7 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
             {
             case SDL_MOUSEBUTTONDOWN:
             {
+                
                 // Deselect with right click
                 if (e.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -191,13 +192,20 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
             }
         }
 
+        // Spawns new gems in the holes on the first row
+        // Sets them as STATIC
         world = World::SpawnNewGems(world);
-        world = World::CalculateGravity(world);
-        world = World::RemoveGemsMatches(world);
-        // if (!World::IsStatic(world))
-        //
 
+        // Will set to STATIC gems that completed the animation
+        // So RemoveGemsMatches should never be called right after, but CalculateGravity
+        // Otherwise it would be possible that a gem matches when it's falling nearby 2 other gems
         world = World::ApplyAnimation(world, gravityPixelsPerFrame, textureSize);
+
+        // Sets to FALLING gems that have a hole below
+        world = World::CalculateGravity(world);
+
+        // Remove only matches for STATIC gems
+        world = World::RemoveGemsMatches(world);
 
         Game::DrawLevel(graphics, world, backgroundTexture, mouseSelection, mouseScreenPosition, textureSize);
 

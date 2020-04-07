@@ -22,20 +22,14 @@ struct GemData
 
 	// Used for smooth animations
 	Vector2f::Vector2fData drawingOffset;
-
 	Vector2f::Vector2fData drawingOffsetGoal;
-
-	
-
 	GemState animation;
-
-	// Vector2i animationGoal;
 
 	GemData() : GemData("")
 	{
 	}
 
-	explicit GemData(const std::string &id) : id(id), drawingOffset({0, 0}), animation(GemState::STATIC), drawingOffsetGoal({0,0})
+	explicit GemData(const std::string &id) : id(id), drawingOffset({0, 0}), drawingOffsetGoal({0, 0}), animation(GemState::STATIC)
 	{
 	}
 };
