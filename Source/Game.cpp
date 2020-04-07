@@ -6,6 +6,7 @@
 #include <iostream>
 #include "UI.hpp"
 #include <sstream>
+#include <fstream>
 
 namespace Game
 {
