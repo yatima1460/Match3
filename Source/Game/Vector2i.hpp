@@ -15,9 +15,21 @@ struct Vector2i
     };
 };
 
+inline void operator+=(Vector2i &A, const Vector2i &B)
+{
+    A.x += B.x;
+    A.y += B.y;
+}
+
+
 inline bool operator==(const Vector2i &A, const Vector2i &B)
 {
     return A.x == B.x && A.y == B.y;
+}
+
+inline bool operator!=(const Vector2i &A, const Vector2i &B)
+{
+    return A.x != B.x || A.y != B.y;
 }
 
 inline Vector2i &operator+(Vector2i &A, const Vector2i &B)

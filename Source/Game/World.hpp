@@ -18,10 +18,10 @@ struct WorldData
   
 };
 
-
+WorldData CalculateGravity(WorldData);
 
 // Returns true if there are no holes in the world and all gems are stable
-bool IsFilledWithGems(const WorldData& world);
+bool IsStatic(const WorldData& world);
 
 // Directly swaps two gems, doesn't care about distances or rules
 WorldData Swap(WorldData world, const Vector2i position1, const Vector2i position2);
@@ -45,7 +45,7 @@ WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemDat
 WorldData RemoveGemsMatches(WorldData world);
 
 // Moves gems down if there is a hole below
-WorldData ApplyGravity(WorldData world, const int pixelsPerFrame, const int textureSize);
+WorldData ApplyAnimation(WorldData world, const int pixelsPerFrame, const int textureSize);
 
 // Returns true if the position can't be affected by gravity
 bool IsPositionStable(const WorldData& world, const Vector2i position);

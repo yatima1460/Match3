@@ -1,15 +1,11 @@
 #include "Game.hpp"
 
-
 #include "AssetsManager.hpp"
 #include <assert.h>
 #include "Timer.hpp"
 #include <iostream>
 #include "UI.hpp"
 #include <sstream>
-
-
-
 
 namespace Game
 {
@@ -64,7 +60,7 @@ void Clean(Graphics::GraphicsData graphics)
     std::cout << "Engine cleaned" << std::endl;
 }
 
-void MainLoop(const json& settings, const Graphics::GraphicsData &graphics)
+void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
 {
     // Main loop
 
@@ -117,7 +113,7 @@ void MainLoop(const json& settings, const Graphics::GraphicsData &graphics)
                 if (e.button.button == SDL_BUTTON_LEFT)
                 {
                     // Allow clicking only when world is filled and static && mouse moved at least once
-                    if (World::IsFilledWithGems(world) && mouseSelection.MouseMovedAtLeastOnce)
+                    if (World::IsStatic(world) && mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
                         if (World::IsCoordinateInside(world, currentMouseGridPosition))
@@ -135,18 +131,19 @@ void MainLoop(const json& settings, const Graphics::GraphicsData &graphics)
                             {
                                 // If the player selected one and clicks again we check if the swap can be done
 
-                                if (UI::IsNearbyTaxiDistance(currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition))
+                                const auto areCellsNearby = UI::IsNearbyTaxiDistance(currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
+                                const auto areBothGemsStatic = world.data[mouseSelection.FirstSelectionLockedGridPosition.x][mouseSelection.FirstSelectionLockedGridPosition.y].animation == Gem::GemState::STATIC && world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].animation == Gem::GemState::STATIC;
+
+                                if (areCellsNearby && areBothGemsStatic)
                                 {
                                     const auto swappedGemsWorld = World::Swap(world, currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
                                     const auto matchesCalculated = World::RemoveGemsMatches(swappedGemsWorld);
-                                    if (!World::IsFilledWithGems(matchesCalculated))
+
+                                    // if the simulated world is different it means there was a match
+                                    // so we apply it
+                                    if (swappedGemsWorld.data != matchesCalculated.data)
                                     {
-                                        // The swapping produced holes, update the world
-                                        world = matchesCalculated;
-                                    }
-                                    else
-                                    {
-                                        // Clicked nearby, but swapping failed
+                                        world.data = matchesCalculated.data;
                                     }
                                 }
 
@@ -194,10 +191,13 @@ void MainLoop(const json& settings, const Graphics::GraphicsData &graphics)
             }
         }
 
-        world = World::RemoveGemsMatches(world);
-
         world = World::SpawnNewGems(world);
-        world = World::ApplyGravity(world, gravityPixelsPerFrame, textureSize);
+        world = World::CalculateGravity(world);
+        world = World::RemoveGemsMatches(world);
+        // if (!World::IsStatic(world))
+        //
+
+        world = World::ApplyAnimation(world, gravityPixelsPerFrame, textureSize);
 
         Game::DrawLevel(graphics, world, backgroundTexture, mouseSelection, mouseScreenPosition, textureSize);
 
@@ -225,7 +225,7 @@ void DrawLevel(const Graphics::GraphicsData &graphics, const World::WorldData &w
     const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, textureSize);
 
     // Draw selection square only if the world has done the fallings and is static
-    if (World::IsFilledWithGems(world))
+    if (World::IsStatic(world))
     {
 
         if (selection.SelectionLocked)
@@ -261,7 +261,10 @@ void DrawWorld(const Graphics::GraphicsData &graphics, const World::WorldData &w
                 const auto texture = AssetManager::GetTextureData(gem.id);
 
                 Vector2i pos = {x, y};
-                Graphics::DrawTexture(graphics, texture, pos * textureSize + gem.drawingOffset);
+                Vector2i drawingOffsetInt;
+                drawingOffsetInt.x = (int)gem.drawingOffset.x;
+                drawingOffsetInt.y = (int)gem.drawingOffset.y;
+                Graphics::DrawTexture(graphics, texture, pos * textureSize + drawingOffsetInt);
             }
         }
     }
