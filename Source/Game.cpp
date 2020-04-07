@@ -112,8 +112,8 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
                 }
                 if (e.button.button == SDL_BUTTON_LEFT)
                 {
-                    // Allow clicking only when world is filled and static && mouse moved at least once
-                    if (World::IsStatic(world) && mouseSelection.MouseMovedAtLeastOnce)
+                    // Allow clicking only when mouse moved at least once (so we don't have 0,0 coords)
+                    if (mouseSelection.MouseMovedAtLeastOnce)
                     {
                         const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
                         if (World::IsCoordinateInside(world, currentMouseGridPosition))
@@ -224,8 +224,8 @@ void DrawLevel(const Graphics::GraphicsData &graphics, const World::WorldData &w
 
     const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseLocation, textureSize);
 
-    // Draw selection square only if the world has done the fallings and is static
-    if (World::IsStatic(world))
+    // Draw selection square only if the cell has done the fallings and is static
+    if (world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].animation == Gem::GemState::STATIC)
     {
 
         if (selection.SelectionLocked)
