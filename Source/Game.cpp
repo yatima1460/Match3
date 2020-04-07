@@ -83,8 +83,8 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
 
     Vector2i mouseScreenPosition = {0, 0};
 
-    const auto textureSize = settings["texture_size"];
-    const auto gravityPixelsPerFrame = settings["gravityPixelsPerFrame"];
+    const int textureSize = settings["texture_size"];
+    const int gravityPixelsPerFrame = settings["gravityPixelsPerFrame"];
 
 #ifdef WIN32
     const auto millisecondsForFrame = 1000.0f / settings["FPS"].get<float>();
@@ -139,12 +139,38 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
                                     const auto swappedGemsWorld = World::Swap(world, currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
                                     const auto matchesCalculated = World::RemoveGemsMatches(swappedGemsWorld);
 
-                                    // if the simulated world is different it means there was a match
-                                    // so we apply it
-                                    if (swappedGemsWorld.data != matchesCalculated.data)
+                                    if (matchesCalculated.data != swappedGemsWorld.data)
                                     {
-                                        world.data = matchesCalculated.data;
+                                    world.data[mouseSelection.FirstSelectionLockedGridPosition.x][mouseSelection.FirstSelectionLockedGridPosition.y].animation = Gem::GemState::SWAPPING;
+                                    world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].animation = Gem::GemState::SWAPPING;
+
+                                    const auto diff1 = (mouseSelection.FirstSelectionLockedGridPosition - currentMouseGridPosition)*textureSize;
+                                    const auto diff2 = (currentMouseGridPosition - mouseSelection.FirstSelectionLockedGridPosition)*textureSize;
+
+                                    
+                                    
+                                    world.data[mouseSelection.FirstSelectionLockedGridPosition.x][mouseSelection.FirstSelectionLockedGridPosition.y].drawingOffsetGoal = diff1;
+                                    world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].drawingOffsetGoal = diff2;
+
+                                    world = World::Swap(world, currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
+
                                     }
+                                   
+
+                                       
+                                //    world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].drawingOffsetGoal   = mouseSelection.FirstSelectionLockedGridPosition - currentMouseGridPosition;
+                                //    world.data[mouseSelection.FirstSelectionLockedGridPosition.x][mouseSelection.FirstSelectionLockedGridPosition.y].drawingOffsetGoal = currentMouseGridPosition - mouseSelection.FirstSelectionLockedGridPosition;
+
+
+
+
+                                    
+                                    // if the simulated world is different it means there was a match
+                                    // so we apply the animation
+                                    // if (swappedGemsWorld.data != matchesCalculated.data)
+                                    // {
+                                    //     world.data = matchesCalculated.data;
+                                    // }
                                 }
 
                                 // Clicked too far or swapping happened

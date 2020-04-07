@@ -137,7 +137,11 @@ CONST_FUNCTION WorldData ApplyAnimation(WorldData world, const int pixelsPerFram
                    
                     
                     break;
-
+                case Gem::GemState::SWAPPING:
+                {
+                    world.data[x][y].animation = Gem::GemState::ANIMATION_DONE;
+                    break;
+                }
                 default:
                     break;
                 }
