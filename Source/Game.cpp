@@ -60,6 +60,7 @@ void Clean(Graphics::GraphicsData graphics)
     std::cout << "Engine cleaned" << std::endl;
 }
 
+
 void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
 {
     // Main loop
@@ -73,8 +74,9 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
     UI::SelectionData mouseSelection;
     SDL_Event e;
 
-    // TODO: load gems data from JSON?
-    std::vector<Gem::GemData> gems = {Gem::GemData("ruby"), Gem::GemData("sapphire"), Gem::GemData("topaz"), Gem::GemData("diamond"), Gem::GemData("amethyst")};
+    std::vector<Gem::GemData> gems;
+    for (auto& gemId : settings["gems"])
+        gems.push_back(Gem::GemData(gemId));
 
     auto world = World::GenerateEmpty(settings["world_size"], gems);
 
@@ -100,97 +102,7 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
         timer = Timer::Ticked(timer);
 
         while (SDL_PollEvent(&e) != 0)
-        {
-            switch (e.type)
-            {
-            case SDL_MOUSEBUTTONDOWN:
-            {
-                
-                // Deselect with right click
-                if (e.button.button == SDL_BUTTON_RIGHT)
-                {
-                    mouseSelection.SelectionLocked = false;
-                }
-                if (e.button.button == SDL_BUTTON_LEFT)
-                {
-                    // Allow clicking only when mouse moved at least once (so we don't have 0,0 coords)
-                    if (mouseSelection.MouseMovedAtLeastOnce)
-                    {
-                        const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
-                        if (World::IsCoordinateInside(world, currentMouseGridPosition))
-                        {
-                            // If the player never selected a cell we allow it
-                            if (!mouseSelection.SelectionLocked)
-                            {
-                                // Save the location where the player clicked
-                                mouseSelection.FirstSelectionLockedGridPosition = currentMouseGridPosition;
-
-                                // Set the selection as locked
-                                mouseSelection.SelectionLocked = true;
-                            }
-                            else
-                            {
-                                // If the player selected one and clicks again we check if the swap can be done
-
-                                const auto areCellsNearby = UI::IsNearbyTaxiDistance(currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
-                                const auto areBothGemsStatic = world.data[mouseSelection.FirstSelectionLockedGridPosition.x][mouseSelection.FirstSelectionLockedGridPosition.y].animation == Gem::GemState::STATIC && world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].animation == Gem::GemState::STATIC;
-
-                                if (areCellsNearby && areBothGemsStatic)
-                                {
-                                    const auto swappedGemsWorld = World::Swap(world, currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
-                                    const auto matchesCalculated = World::RemoveGemsMatches(swappedGemsWorld);
-
-                                    // if the simulated world is different it means there was a match
-                                    // so we apply it
-                                    if (swappedGemsWorld.data != matchesCalculated.data)
-                                    {
-                                        world.data = matchesCalculated.data;
-                                    }
-                                }
-
-                                // Clicked too far or swapping happened
-                                mouseSelection.SelectionLocked = false;
-                            }
-                        }
-                    }
-                }
-                break;
-            }
-            case SDL_MOUSEMOTION:
-            {
-                // Update mouse position when mouse is moved
-                mouseScreenPosition.x = e.motion.x;
-                mouseScreenPosition.y = e.motion.y;
-
-                mouseSelection.MouseMovedAtLeastOnce = true;
-                break;
-            }
-            case SDL_QUIT:
-            {
-                // Pressing the SDLWindow [X] closes
-                quit = true;
-                break;
-            }
-            case SDL_KEYDOWN:
-            {
-                switch (e.key.keysym.sym)
-                {
-                // ESC closes
-                case SDLK_ESCAPE:
-                    quit = true;
-                    break;
-
-                default:
-                    break;
-                }
-                break;
-            }
-            default:
-            {
-                break;
-            }
-            }
-        }
+            PollEvents(e, quit, mouseScreenPosition, mouseSelection, world, textureSize);
 
         // Spawns new gems in the holes on the first row
         // Sets them as STATIC
@@ -275,6 +187,100 @@ void DrawWorld(const Graphics::GraphicsData &graphics, const World::WorldData &w
                 Graphics::DrawTexture(graphics, texture, pos * textureSize + drawingOffsetInt);
             }
         }
+    }
+}
+
+
+void PollEvents(SDL_Event e, bool& quitted, Vector2i& mouseScreenPosition, UI::SelectionData& mouseSelection, World::WorldData& world,  int textureSize)
+{
+    switch (e.type)
+    {
+    case SDL_MOUSEBUTTONDOWN:
+    {
+
+        // Deselect with right click
+        if (e.button.button == SDL_BUTTON_RIGHT)
+        {
+            mouseSelection.SelectionLocked = false;
+        }
+        if (e.button.button == SDL_BUTTON_LEFT)
+        {
+            // Allow clicking only when mouse moved at least once (so we don't have 0,0 coords)
+            if (mouseSelection.MouseMovedAtLeastOnce)
+            {
+                const auto currentMouseGridPosition = UI::ScreenPositionToGridPosition(mouseScreenPosition, textureSize);
+                if (World::IsCoordinateInside(world, currentMouseGridPosition))
+                {
+                    // If the player never selected a cell we allow it
+                    if (!mouseSelection.SelectionLocked)
+                    {
+                        // Save the location where the player clicked
+                        mouseSelection.FirstSelectionLockedGridPosition = currentMouseGridPosition;
+
+                        // Set the selection as locked
+                        mouseSelection.SelectionLocked = true;
+                    }
+                    else
+                    {
+                        // If the player selected one and clicks again we check if the swap can be done
+
+                        const auto areCellsNearby = UI::IsNearbyTaxiDistance(currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
+                        const auto areBothGemsStatic = world.data[mouseSelection.FirstSelectionLockedGridPosition.x][mouseSelection.FirstSelectionLockedGridPosition.y].animation == Gem::GemState::STATIC && world.data[currentMouseGridPosition.x][currentMouseGridPosition.y].animation == Gem::GemState::STATIC;
+
+                        if (areCellsNearby && areBothGemsStatic)
+                        {
+                            const auto swappedGemsWorld = World::Swap(world, currentMouseGridPosition, mouseSelection.FirstSelectionLockedGridPosition);
+                            const auto matchesCalculated = World::RemoveGemsMatches(swappedGemsWorld);
+
+                            // if the simulated world is different it means there was a match
+                            // so we apply it
+                            if (swappedGemsWorld.data != matchesCalculated.data)
+                            {
+                                world.data = matchesCalculated.data;
+                            }
+                        }
+
+                        // Clicked too far or swapping happened
+                        mouseSelection.SelectionLocked = false;
+                    }
+                }
+            }
+        }
+        break;
+    }
+    case SDL_MOUSEMOTION:
+    {
+        // Update mouse position when mouse is moved
+        mouseScreenPosition.x = e.motion.x;
+        mouseScreenPosition.y = e.motion.y;
+
+        mouseSelection.MouseMovedAtLeastOnce = true;
+        break;
+    }
+    case SDL_QUIT:
+    {
+        // Pressing the SDLWindow [X] closes
+        quitted = true;
+        break;
+    }
+    case SDL_KEYDOWN:
+    {
+        switch (e.key.keysym.sym)
+        {
+        // ESC closes
+        case SDLK_ESCAPE:
+            quitted = true;
+            break;
+
+        default:
+            break;
+        }
+        break;
+    }
+    default:
+    {
+        break;
+    }
     }
 }
 
