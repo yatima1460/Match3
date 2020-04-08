@@ -1,7 +1,7 @@
 #include "World.hpp"
 #include "Functional.hpp"
 #include <cassert>
-#include "Vector2f.hpp"
+#include "Math/Vector2f.hpp"
 
 namespace World
 {
@@ -200,9 +200,6 @@ CONST_FUNCTION WorldData RemoveGemsMatches(WorldData world)
             const auto next = world.data[x + 1][y];
             const auto nextnext = world.data[x + 2][y];
 
-            // if (!World::IsPositionStable(world, {x, y}))
-            //     continue;
-
             if (current.animation == Gem::GemState::STATIC && next.animation == Gem::GemState::STATIC && nextnext.animation == Gem::GemState::STATIC && current.id == next.id && next.id == nextnext.id)
             {
                 toRemove[x][y] = true;
@@ -221,9 +218,6 @@ CONST_FUNCTION WorldData RemoveGemsMatches(WorldData world)
             const auto current = world.data[x][y];
             const auto next = world.data[x][y + 1];
             const auto nextnext = world.data[x][y + 2];
-
-            // if (!World::IsPositionStable(world, {x, y}))
-            //     continue;
 
             if (current.animation == Gem::GemState::STATIC && next.animation == Gem::GemState::STATIC && nextnext.animation == Gem::GemState::STATIC && current.id == next.id && next.id == nextnext.id)
             {

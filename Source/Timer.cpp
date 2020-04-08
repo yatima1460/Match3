@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 #include <algorithm>
-#include "Game/Functional.hpp"
+#include "Functional.hpp"
 
 float clamp(float n, float lower, float upper)
 {
@@ -16,7 +16,6 @@ namespace Timer
 
 TimerData::TimerData() : NOW(SDL_GetPerformanceCounter()), LAST(SDL_GetPerformanceCounter()), FPS(0)
 {
-    
 }
 
 CONST_FUNCTION float DeltaTime(const TimerData data)

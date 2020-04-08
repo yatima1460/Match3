@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SDL.h>
-#include "TexturePointer.hpp"
-#include "Game/Functional.hpp"
+#include "Rendering/TexturePointer.hpp"
+#include "Functional.hpp"
 
 namespace UI
 {
@@ -35,7 +35,7 @@ CONST_FUNCTION inline Vector2i GridPositionToScreenPosition(const Vector2i gridL
     return {gridLocation.x * textureSize, gridLocation.y * textureSize};
 }
 
-inline void DrawTextureAtGridPosition(const Graphics::GraphicsData& graphics, const TexturePointer::TexturePointerData& texture, const Vector2i gridPosition, const int gridSize)
+inline void DrawTextureAtGridPosition(const Graphics::GraphicsData &graphics, const TexturePointer::TexturePointerData &texture, const Vector2i gridPosition, const int gridSize)
 {
     const auto positionToDrawSelection = UI::GridPositionToScreenPosition(gridPosition, gridSize);
     Graphics::DrawTexture(graphics, texture, positionToDrawSelection);

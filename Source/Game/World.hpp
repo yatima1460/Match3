@@ -5,7 +5,7 @@
 #include <memory.h>
 #include <cassert>
 #include <SDL.h>
-#include "Vector2i.hpp"
+#include "Math/Vector2i.hpp"
 
 namespace World
 {
@@ -19,13 +19,13 @@ struct WorldData
 WorldData CalculateGravity(WorldData);
 
 // Returns true if there are no holes in the world and all gems are stable
-bool IsStatic(const WorldData& world);
+bool IsStatic(const WorldData &world);
 
 // Directly swaps two gems, doesn't care about distances or rules
-WorldData Swap(WorldData world, const Vector2i& position1, const Vector2i& position2);
+WorldData Swap(WorldData world, const Vector2i &position1, const Vector2i &position2);
 
 // Returns true if the x,y coordinate is valid
-CONST_FUNCTION inline bool IsCoordinateInside(const World::WorldData& world, const Vector2i coord)
+CONST_FUNCTION inline bool IsCoordinateInside(const World::WorldData &world, const Vector2i coord)
 {
     return coord.x >= 0 && coord.y >= 0 && coord.x < world.side && coord.y < world.side;
 }
@@ -34,10 +34,10 @@ CONST_FUNCTION inline bool IsCoordinateInside(const World::WorldData& world, con
 WorldData SpawnNewGems(WorldData world);
 
 // Generate internal grid as empty
-WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData>& gemData);
+WorldData GenerateEmpty(const int side, const std::vector<Gem::GemData> &gemData);
 
 // Generate the entire grid picking randomly from gemData
-WorldData GenerateFilled(const int side, const std::vector<Gem::GemData>& gemData);
+WorldData GenerateFilled(const int side, const std::vector<Gem::GemData> &gemData);
 
 // Checks for matches and returns a new world with maybe holes
 WorldData RemoveGemsMatches(WorldData world);
@@ -46,17 +46,16 @@ WorldData RemoveGemsMatches(WorldData world);
 WorldData ApplyAnimation(WorldData world, const int pixelsPerFrame, const int textureSize);
 
 // Returns true if the position can't be affected by gravity
-bool IsPositionStable(const WorldData& world, const Vector2i position);
+bool IsPositionStable(const WorldData &world, const Vector2i position);
 
 } // namespace World
 
-
-inline bool operator==(const World::WorldData& A, const World::WorldData& B)
+inline bool operator==(const World::WorldData &A, const World::WorldData &B)
 {
-	return A.data == B.data;
+    return A.data == B.data;
 }
 
-inline bool operator!=(const World::WorldData& A, const World::WorldData& B)
+inline bool operator!=(const World::WorldData &A, const World::WorldData &B)
 {
-	return A.data != B.data;
+    return A.data != B.data;
 }

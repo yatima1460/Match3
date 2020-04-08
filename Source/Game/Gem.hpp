@@ -2,7 +2,7 @@
 
 #include <string>
 #include <SDL.h>
-#include "Vector2f.hpp"
+#include "Math/Vector2f.hpp"
 #include "Functional.hpp"
 
 namespace Gem

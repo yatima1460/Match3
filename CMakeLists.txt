@@ -31,6 +31,8 @@ include_directories(Vendor/stb)
 include_directories(Vendor/nlohmann)
 
 
+include_directories(Include)
+
 if(WIN32)
     # Windows
 

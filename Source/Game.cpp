@@ -24,7 +24,6 @@ void Start()
 
     if (file)
     {
-
         std::stringstream buffer;
         buffer << file.rdbuf();
         file.close();
@@ -61,11 +60,8 @@ void Clean(Graphics::GraphicsData graphics)
     std::cout << "Engine cleaned" << std::endl;
 }
 
-
 void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
 {
-    // Main loop
-
     std::cout << "Starting mainloop now..." << std::endl;
 
     Timer::TimerData timer;
@@ -76,7 +72,7 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
     SDL_Event e;
 
     std::vector<Gem::GemData> gems;
-    for (auto& gemId : settings["gems"])
+    for (auto &gemId : settings["gems"])
         gems.push_back(Gem::GemData(gemId));
 
     auto world = World::GenerateEmpty(settings["world_size"], gems);
@@ -128,7 +124,7 @@ void MainLoop(const json &settings, const Graphics::GraphicsData &graphics)
         if (time < 0)
             continue; // if time is negative, the time probably overflew, so continue asap
 
-        int sleepTime = millisecondsForFrame - time;
+        int sleepTime = (int)(millisecondsForFrame - time);
         if (sleepTime > 0)
         {
             SDL_Delay(sleepTime);
@@ -191,8 +187,7 @@ void DrawWorld(const Graphics::GraphicsData &graphics, const World::WorldData &w
     }
 }
 
-
-void PollEvents(SDL_Event e, bool& quitted, Vector2i& mouseScreenPosition, UI::SelectionData& mouseSelection, World::WorldData& world,  int textureSize)
+void PollEvents(SDL_Event e, bool &quitted, Vector2i &mouseScreenPosition, UI::SelectionData &mouseSelection, World::WorldData &world, int textureSize)
 {
     switch (e.type)
     {

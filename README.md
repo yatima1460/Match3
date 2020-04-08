@@ -54,7 +54,7 @@ Not supported yet
 - MessageBoxes for code errors
 - ~Load game data from json files and replace Settings.ini too?~
 - Android build?
-- Add other backends like OpenGL, DirectX, Vulkan?
+- Better rendering abstraction: add other backends like OpenGL, DirectX, Vulkan?
 - Score?
 
 # Credits
