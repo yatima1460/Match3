@@ -41,12 +41,12 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
 endif ()
 
 
-file(GLOB SOURCES *.cpp ../Source/Game/*.cpp)
+file(GLOB_RECURSE SOURCES *.cpp ../Source/Game/*.cpp)
 
 # Trivial example using gtest and gmock
 add_executable(Match3Test ${SOURCES})
 
-include_directories("../Source/Game")
+include_directories("../Include/Game")
 
 
 target_link_libraries(Match3Test gtest gmock_main)
