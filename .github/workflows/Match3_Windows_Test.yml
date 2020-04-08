@@ -18,6 +18,5 @@ jobs:
       working-directory: build
       run: msbuild Match3.sln
 
-    - run: ./Tests/Match3Test.exe
-      working-directory: out
-      
+    - run: ./Tests/Debug/Match3Test.exe
+      working-directory: build
